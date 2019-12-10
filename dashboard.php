@@ -136,7 +136,7 @@ desired effect
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left tab">
-                  <button class="tablinks btn btn-default btn-flat" onclick="openform(event, 'Product')">Profie</button>
+                  <button class="tablinks btn btn-default btn-flat" onclick="openform(event, 'updateProfile')">Profie</button>
 
                 </div>
                 <div class="pull-right">
@@ -147,7 +147,7 @@ desired effect
           </li>
           <!-- Control Sidebar Toggle Button -->
           <li>
-            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+            <a href="#" class="dropdown"><i class="fa fa-gears"></i></a>
           </li>
         </ul>
       </div>
@@ -157,7 +157,7 @@ desired effect
   <aside class="main-sidebar control-sidebar">
 
     <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar"  style="background: red;">
+    <section class="sidebar"  >
 
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel">
@@ -185,21 +185,12 @@ desired effect
 
       <!-- Sidebar Menu -->
       <ul class="sidebar-menu" data-widget="tree">
-        <li class="header">HEADER</li>
+        <li class="header"> <i class="fa fa-gears"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SETTINGS </li>
         <!-- Optionally, you can add icons to the links -->
-        <li class="active"><a href="#" id="iterm" onclick="add_iterm()"> <span>Add iterm</span></a></li>
-        <li><a href="#" id="client" href=""> <span>Add client </span></a></li>
-        <!-- <li class="treeview">
-          <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
-            <span class="pull-right-container">
-                <i class="fa fa-angle-left pull-right"></i>
-              </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="#">Link in level 2</a></li>
-            <li><a href="#">Link in level 2</a></li>
-          </ul>
-        </li> -->
+        <li ><button class="tablinks btn-block"  onclick="openform(event, 'adduser_form')"><i class="fa fa-plus"></i><span>&nbsp;&nbsp;&nbsp;&nbsp; REGISTER SYSTEM USER</span></button></li>
+        <li> <button class="tablinks  btn-block" onclick="openform(event, 'show_company_register')"><i class="fa fa-book"></i>&nbsp;&nbsp;&nbsp;&nbsp;<span>REGISTER COMPANY</span></button></li>
+        <li> <button class="tablinks btn-block" onclick="openform(event, 'company_account_form')"><i class="fa fa fa-fw fa-bank"></i>&nbsp;&nbsp;&nbsp;&nbsp;<span>COMPANY ACCOUNT</span></button></li>
+
       </ul>
       <!-- /.sidebar-menu -->
     </section>
@@ -208,17 +199,6 @@ desired effect
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <!-- <section class="content-header" id="body_tag">
-      <h1>
-        Page Header
-        <small>Optional description</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
-        <li class="active">Here</li>
-      </ol>
-    </section> -->
 
     <!-- Main content -->
     <section class="content container-fluid">
@@ -232,6 +212,7 @@ desired effect
           <button class="tablinks" onclick="openform(event, 'Client')">CLIENT</button>
           <button class="tablinks" onclick="openform(event, 'cellproduct')">CELL PRODUCT</button>
           <button class="tablinks" onclick="openform(event, 'upload')">INVOICE</button>
+
         </div>
         <div id="upload" class="tabcontent">
           <h3><center>Upload Profile image </center></h3>
@@ -245,6 +226,54 @@ desired effect
           </div>
           <button type="submit" class="btn btn-info" name="upload">Upload Image</button>
           </form>
+        </div>
+        <div class="tabcontent" id="updateProfile">
+          <center>
+          <li class="user-header">
+            <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+
+            <p>
+              <?php echo $session_fullname; ?> - Web Developer
+              <small>Member since Nov. 2012</small>
+            </p>
+          </li>
+        </center>
+            <h3><center>Update Profile</center></h3>
+          <p>
+            <form action="productDB.php" method="post">
+              <div class="form-group row">
+                  <label class="col-sm-2 col-md-2 col-form-label">Full Name</label>
+                  <div class="col-sm-4 col-md-4">
+                      <input type="text" class="form-control" id="" value="<?php echo $session_fullname; ?>" placeholder="Full Name" name="fullname">
+                  </div>
+                  <label class="col-sm-2 col-md-2 col-form-label">Username</label>
+                  <div class="col-sm-4 col-md-4">
+                      <input type="text" class="form-control" id="" placeholder="Username" value="<?php echo $session_username;?>" name="user_name">
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label class="col-sm-2 col-md-2 col-form-label">Email</label>
+                  <div class="col-sm-4 col-md-4">
+                      <input type="email" class="form-control" id="" placeholder="Email address" name="email" value="<?php echo $session_email; ?>">
+                  </div>
+                  <label class="col-sm-2 col-md-2 col-form-label">Phone Number</label>
+                  <div class="col-sm-4 col-md-4">
+                      <input class="form-control" id="" placeholder="Phone number" value="<?php echo $phonenumber; ?>" name="phone_number"></textarea>
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label class="col-sm-2 col-md-2 col-form-label">Password</label>
+                  <div class="col-sm-3 col-md-4">
+                      <input type="text" class="form-control" id="password" placeholder="Password"  name="password">
+                  </div>
+                  <label class="col-sm-2 col-md-2 col-form-label">Confirm Password</label>
+                  <div class="col-sm-3 col-md-4 ">
+                      <input type="text" class="form-control" id="confirmpassword" placeholder="Confirm Password" >
+                  </div>
+            </div>
+              <button type="submit" name="profile" class="btn btn-info">UPDATE PROFILE</button>
+            </form>
+          </p>
         </div>
         <div id="Product" class="tabcontent">
           <h3><center>REGISTER PRODUCT </center></h3>
@@ -445,9 +474,9 @@ desired effect
           </div>
           <div class="col-md-2"></div>
         </div> -->
-        <div class="" id="show_company_register">
-          <div class="col-md-2"></div>
-          <div class="col-md-8">
+        <div class="tabcontent" id="show_company_register">
+
+          <div class="col-md-10 col-md-offset-2">
           <div class="box">
               <div class="box-header">REGISTER COMPANY IN A SYSTEM</div>
               <div class="box-body">
@@ -510,11 +539,11 @@ desired effect
               </div>
             </div>
           </div>
-          <div class="col-md-2"></div>
+
           </div>
-          <div id="company_account_form">
-            <div class="col-md-2"></div>
-            <div class="col-md-8">
+          <div id="company_account_form" class="tabcontent">
+
+            <div class="col-md-8 col-md-offset-2">
             <div class="box">
                 <div class="box-header">REGISTER COMPANY ACCOUNT</div>
                 <div class="box-body">
@@ -547,9 +576,9 @@ desired effect
                 </div>
               </div>
             </div>
-            <div class="col-md-2"></div>
+
           </div>
-          <div id="adduser_form">
+          <div id="adduser_form" class="tabcontent">
                 <div class="col-md-2"></div>
                     <div class="col-md-8">
                       <div class="box">
