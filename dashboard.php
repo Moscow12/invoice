@@ -209,8 +209,8 @@ desired effect
 
         <div class="tab col-xs-12 col-sm-12 col-md-12">
           <button class="tablinks" onclick="openform(event, 'Product')">PPODUCT</button>
-          <button class="tablinks" onclick="openform(event, 'Client')">CLIENT</button>
-          <button class="tablinks" onclick="openform(event, 'cellproduct')">CELL PRODUCT</button>
+          <button class="tablinks" id='Client_tab'onclick="openform(event, 'Client')">CLIENT</button>
+          <button class="tablinks" id='cellproduct_tab' onclick="openform(event, 'cellproduct')">CELL PRODUCT</button>
           <button class="tablinks" onclick="openform(event, 'upload')">INVOICE</button>
 
         </div>
@@ -316,7 +316,48 @@ desired effect
         </div>
 
         <div id="Client" class="tabcontent">
-          <h3><center>REGISTER CLIENT </center></h3>
+          <center><h3></h3></center> <center style="align-content:right;"><button class="tablinks btn btn-info" onclick="openform(event, 'Add_new_CLient')" name="button">ADD NEW </button></center>
+          <?php
+          $customer_list = mysqli_query($conn, "SELECT Customer_ID,client_region,client_street, Client_name FROM tbl_customer_registraion where User_ID='$session_ID'") or die(mysqli_error($conn));
+          ?>
+          <div class="col-md-12" style='height:400px;overflow-y:scroll'>
+              <table class='table' style='background:#FFFFFF'>
+                  <caption><b><center>LIST OF REGISTERED CUSTOMER</center></b></caption>
+                  <tr>
+                      <th>S/No.</th>
+                      <th>CUSTOMER NAME</th>
+                      <th>LOCATION</th>
+                      <th>ACTION</th>
+                  </tr>
+                  <tbody id='list_of_all_customer'>
+                    <?php
+                    if((mysqli_num_rows($customer_list))){
+                      $num=0;
+                      while($row = mysqli_fetch_assoc($customer_list)){
+                        $Customer_ID = $row['Customer_ID'];
+                        $customer_name = $row['Client_name'];
+                        $region = $row['client_region'];
+                        $street = $row['client_street'];
+                        $num++;
+                        ?>
+                        <tr>
+                            <td><?php echo $num; ?></td>
+                            <td><input hidden value="<?php echo $Customer_ID; ?>"><?php echo $customer_name; ?></td>
+                            <td><?php echo $region .'('.$street.')'; ?></td>
+                            <td><input value="CELL PRODUCT" type="button" onclick="capture_customer_id(<?php echo $Customer_ID;?>)"  id="cell_product"></td>
+                        </tr>
+                        <?php
+                       }
+                     }else{
+                       echo "<tr><td colspan='3'> NO ANY CUSTOMER FOUND ADD NEW IN BUTTON ABOVE</td></tr>";
+                     }
+                         ?>
+                  </tbody>
+              </table>
+          </div>
+        </div>
+          <div id="Add_new_CLient" class="tabcontent">
+          <h3><center>REGISTER CUSTOMER </center></h3>
 
           <p>  <hr>
               <form action="productDB.php" method="post">
@@ -360,120 +401,30 @@ desired effect
               </form>
           </p>
         </div>
-
         <div id="cellproduct" class="tabcontent">
 
-          <center><h3>CELL PRODUCT TO CUSTOMER</h3></center>
+          <center><h3>SALE PRODUCT TO CUSTOMER</h3></center>
+
+          <div id="div_to_cell_product">
+
+          </div>
+
+        </div>
+        <div id="cellproduct" class="tabcontent">
+
+
           <?php
-            $customer_list = mysqli_query($conn, "SELECT Customer_ID, Client_name FROM tbl_customer_registraion where User_ID='$session_ID'");
+
             $product_list = mysqli_query($conn, "SELECT * FROM tbl_product where User_ID='$session_ID'");
            ?>
           <p>
-            <fieldset>
-                  <center><legend>CUSTOMER TO ITEM</legend></center>
-                  <form action="" method="post">
-                    <div class="form-group row">
-                        <label for="" class="col-sm-3 col-form-label">CUSTOMER</label>
-                        <div class="col-sm-9">
-                            <select id="select_customer" onchange="capture_customer_id()" class="form-control" name="customer_buying_ID">
-                              <option value="">~~select costomer~~</option>
-                              <?php
-                                while($row = mysqli_fetch_assoc($customer_list)){
-                                  $Customer_ID = $row['Customer_ID'];
-                                  $customer_name = $row['Client_name'];
-                                  ?>
-                                  <option value="<?php echo $Customer_ID; ?>"><?php echo $customer_name; ?></option>
-                              <?php  } ?>
 
-                            </select>
-                        </div>
-                    </div>
-
-                    <table class="table table-bordered">
-                        <thead>
-                          <th>#</th>
-                          <th>Product name</th>
-                          <th>Price(Tsh.)</th>
-                          <th>Quantity</th>
-                          <th>Total Amount</th>
-                          <th>Action</th>
-                        </thead>
-                        <tbody>
-
-                          <input type="text" id="selected_customer_id" name="Customer_ID" value="" style="display:none">
-                          <?php
-
-                              $num= 1;
-                              while($rows = mysqli_fetch_assoc($product_list)){
-                                $Product_ID = $rows['Product_ID'];
-                                $item = $rows['product_name'];
-                                $price = $rows['product_price'];
-                                $unit = $rows['product_unit'];
-
-                          ?>
-                          <tr id="cellselected">
-                            <td><?php echo $num++; ?></td>
-                            <td align="center"><?php echo $item;?> (<?php echo $unit; ?>)<input name="Product_ID" value="<?php echo $Product_ID; ?>" style="display:none"></td>
-                            <td align="center"><?php echo $price; ?><input id="price"style="display:none" value="<?php echo $price; ?>"></td>
-                            <td><input class="form-control" name="quantity" id="quantity" placeholder="Quantity" ></td>
-                            <td align="center"><input disabled id="amount"></td>
-                            <td><input  type="button" class="btn btn-info" value="CELL"  onclick="cell_that_product('<?php echo $Product_ID;?>')"></td>
-                          </tr>
-                        <?php }?>
-                        </tbody>
-                    </table>
-                  </form>
-            </fieldset>
-            <fieldset>
-              <div class="row" id="product_sold">
-                <table class="table table-striped table-responsive">
-                    <thead>
-                      <th>#</th>
-                      <th>Product name</th>
-                      <th>Price</th>
-                      <th>Quantity</th>
-                      <th>Amount</th>
-                    </thead>
-                    <tbody id="product_sold">
-
-                    </tbody>
-                </table>
-              </div>
-            </fieldset>
         </p>
         </div>
-        <!-- <div id="iterm_form">
-          <div class="col-md-2"></div>
-          <div class="col-md-8">
-          <div class="box">
-              <div class="box-header">REGISTER COMPANY ACCOUNT</div>
-              <div class="box-body">
-                  <form action="setting_db.php" method="post">
-                      <div class="form-group row">
-                          <label for="" class="col-sm-3 col-form-label">Product name</label>
-                          <div class="col-sm-9">
-                            <input type="text" class="form-control" id="" name="product_name" placeholder="Account name">
-                          </div>
-                      </div>
-                      <div class="form-group row">
-                          <label for="" class="col-sm-3 col-form-label">Product Description</label>
-                          <div class="col-sm-9">
-                              <textarea class="form-control" name="product_description" rows="2"></textarea>
-                          </div>
-                      </div>
-                      <div class="form-group row">
-                          <label for="" class="col-sm-3 col-form-label">Product Price</label>
-                          <div class="col-sm-9">
-                              <input type="text" class="form-control" id="" placeholder="Product Price" name="product_price">
-                          </div>
-                      </div>
-                      <button type="submit"  class="btn btn-info" name="company_account">Submit</button>
-                  </form>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-2"></div>
-        </div> -->
+        <div class="tabcontent" id="preview_invoice_div">
+
+        </div>
+
         <div class="tabcontent" id="show_company_register">
 
           <div class="col-md-10 col-md-offset-2">
@@ -578,6 +529,7 @@ desired effect
             </div>
 
           </div>
+
           <div id="adduser_form" class="tabcontent">
                 <div class="col-md-2"></div>
                     <div class="col-md-8">
@@ -705,55 +657,90 @@ desired effect
 <!-- REQUIRED JS SCRIPTS -->
 <?php include("footer.php"); ?>
 <script>
-  function capture_customer_id(){
-
-    var select_customer = $('#select_customer').val();
-    $('#selected_customer_id').val(select_customer);
-    var selected_customer_id = $('#selected_customer_id').val();
-    // $.ajax({
-    //   type:'post',
-    //   url:'selected_customer_cells_today.php',
-    //   data:{selected_customer_id:selected_customer_id}
-    //   success:function(responce){
-    //     $("#product_sold").html(responce);
-    //   }
-    // });
+  function capture_customer_id(Customer_ID){
+//alert("hhhhhhhhhh");
+    $.ajax({
+      type:'POST',
+      url:'selected_customer_cells_today.php',
+      data:{Customer_ID:Customer_ID},
+      success:function(responce){
+        $("#cellproduct_tab").attr("class","active");
+        $("#Client_tab").attr("class","");
+        $("#cellproduct").show();
+        $("#Client").hide();
+        $("#div_to_cell_product").html(responce);
+        $(document).ready(function(){
+          today_product_sold()
+        });
+      }
+    });
   }
 
 function cell_that_product(Product_ID){
+var inp_id = "id"+Product_ID;
+  var Customer_ID = $('#selected_customer_id').val();
+  var quantity = $('#'+inp_id).val();
 
-  var selected_customer_id = $('#selected_customer_id').val();
-  var quantity = $('#quantity').val();
-  if(selected_customer_id==""){
-    $("#select_customer").css("border","2px solid red");
-  }else if(quantity==""){
-    $("#quantity").css("border","2px solid red");
+ if(quantity==""){
+    $("#"+inp_id).css("border","2px solid red");
+    exit();
   }else{
-    $("#select_customer").css("border","");
-    $("#quantity").css("border","");
+    $("#"+inp_id).css("border","");
   $.ajax({
     type:'POST',
     url:'cell_product.php',
-    data:{selected_customer_id:selected_customer_id, quantity:quantity, Product_ID:Product_ID},
+    data:{selected_customer_id:Customer_ID, quantity:quantity, Product_ID:Product_ID},
     success:function(responce){
-      $("#cellselected"+Product_ID).css("background:#34ebcc;");
-      alert("sold successfull continue with another product");
+      alert("Umeuza kikamilifu");
+      today_product_sold()
     }
   });
 }
 }
-  // function quantity_cal_total(){
-  //   var price = $('#price').val();
-  //   var quantity = $('#quantity').val();
-  //   var amount = $('#amount').val();
-  //   amount = price * quantity;
-  //   $("#price").on("change", function(){
-  //     $("#amount").show(amount);
-  //   });
-  // }
+function today_product_sold(){
+    var Customer_ID = $('#selected_customer_id').val();
+
+    $.ajax({
+      type:'POST',
+      url:'ajax_today_product_sold.php',
+      data:{Customer_ID:Customer_ID},
+      success:function(responce){
+        //alert(responce);
+        $("#product_sold_today").html(responce);
+      }
+    });
+}
+function preview_invoice(){
+  var Customer_ID = $('#selected_customer_id').val();
+
+    $.ajax({
+      type:'POST',
+      url:'ajax_preview_invoice.php',
+      data:{Customer_ID:Customer_ID},
+      success:function(responce){
+        $("#preview_invoice_div").html(responce);
+      }
+    });
+}
+
+function invoice_generated(){
+  alert("invoice generated");
+  var Customer_ID = $('#selected_customer_id').val();
+    $.ajax({
+      type:'POST',
+      url:'invoice_generated.php',
+      data:{Customer_ID:Customer_ID},
+      success:function(responce){
+      alert("invoice generated");
+      window.open('invoice_generated_pdf.php',"_blank");
+      }
+    });
+}
+
 </script>
 <script>
 $(document).ready(function(){
+
   $("#show_company_register").hide();
   $("#company_account_form").hide();
   $("#adduser_form").hide();
