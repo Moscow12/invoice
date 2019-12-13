@@ -21,5 +21,3 @@ ff
         $product_list = mysqli_query($conn, "SELECT * FROM tbl_product where User_ID='$session_ID'");
 
  ?>
-
- ?>
