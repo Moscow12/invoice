@@ -20,6 +20,9 @@
         }
           $product_list = mysqli_query($conn, "SELECT * FROM tbl_product where User_ID='$session_ID'");
 
+
+        $select_incoice = mysqli_query($conn, "SELECT Invoice_ID, duedate FROM tbl_invoice WHERE Customer_ID='$Customer_ID' AND User_ID='$session_ID' AND DATE(created_at)=CURDATE()") or die(mysqli_error($conn));
+
          ?>
       <fieldset>
             <center><h3 >PRODUCT SOLD TO <span style="background-color:#ccffcc;"><?php echo $customer_name; ?></span>  </h3></center>
@@ -64,11 +67,74 @@
               ?>
             </tbody>
         </table>
-        <button  onclick("invoice_generated()") class="btn btn-primary" >Generate Invoice</button>
+
+
     </fieldset>
+  </fieldset><br><br>
+  <fieldset style="border:1px solid grey;">
+    <center><legend align="center">SET INVOICE DATE</legend></center>
+    <form action="" method="post">
+      <div class="row" id="saveduedates">
+      <div class="col-md-3">
+        Due Date
+      </div>
+      <div class="col-md-6">
+        <input type="date" name="duedate" value="" id="duedate" class="form-control">
+      </div>
+      <div class="col-md-3">
+        <button type="button" class="btn btn-primary" name="btnduedate" onclick="saveduedate(<?php echo $Customer_ID; ?>), hidesavedate();">SAVE</button>
+      </div>
+    </div>
+
+      <div class="row" id="editduedate">
+        <?php
+        if((mysqli_num_rows($select_incoice))>0){
+          while($Incoice_ID = mysqli_fetch_assoc($select_incoice)){
+            $invoiceID= $Incoice_ID['Invoice_ID'];
+            $duedate = $Incoice_ID['duedate'];
+            ?>
+            <div class="col-md-3">
+              Due Date
+            </div>
+            <div class="col-md-5">
+              <input type="date" name="duedate" value="<?php echo $duedate; ?>" id="duedate" class="form-control">
+            </div>
+            <div class="col-md-2">
+              <span><button type="button" class="btn btn-primary btn-block" name="btnduedate" >Edit Date</button></span>
+            </div>
+            <div class="col-md-2">
+              <span><a href="invoice_generated_pdf.php?Customer_ID=<?= $Customer_ID?>" class="btn btn-primary" target="_blank" id="invoicebtn">  Generate Invoice</a>
+              </span>
+            </div>
+            <?php
+        }  }else{
+            ?>
+            <div class="col-md-3">
+              Due Date
+            </div>
+            <div class="col-md-5">
+              <input type="date" name="duedate" value="<?php echo "Due date note set"; ?>" id="duedate" class="form-control">
+            </div>
+            <div class="col-md-2">
+              <span><button type="button" class="btn btn-primary btn-block" name="btnduedate" >Edit Date</button></span>
+            </div>
+            <div class="col-md-2">
+              <span><a href="invoice_generated_pdf.php?Customer_ID=<?= $Customer_ID?>" class="btn btn-primary" target="_blank" id="invoicebtn">  Generate Invoice</a>
+              </span>
+            </div>
+            <?php
+          }
+    ?>
+
+      </div>
+    </form>
+
   </fieldset>
 
   <script>
+  $(document).ready(function(){
+   $("#editduedate").hide();
+  });
   function invoice_generated(){
     alert("invoice generated");
     var Customer_ID = $('#selected_customer_id').val();
@@ -82,4 +148,32 @@
         }
       });
   }
+
+   function saveduedate(Customer_ID){
+       var duedate = $("#duedate").val();
+       if(duedate==''){
+         $("#duedate").css("border", "2px solid red");
+       }else{
+         $("#duedate").css("border", "");
+
+       $.ajax({
+         type:'POST',
+         url:'ajax_preview_invoice.php',
+         data:{duedate:duedate,Customer_ID:Customer_ID},
+         success:function(responce){
+           $("#editduedate").show();
+
+         }
+       });
+      }
+   }
+function hidesavedate(){
+  var duedate = $("#duedate").val();
+  if(duedate==''){
+    $("#duedate").css("border", "2px solid red");
+  }else{
+    $("#duedate").css("border", "");
+  $("#saveduedates").hide();
+  }
+}
   </script>

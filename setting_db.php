@@ -73,4 +73,17 @@ session_start();
       header("location: dashboard.php");
       }
     }
+
+    if(isset($_POST['btnduedate'])){
+      $Customer_ID = $_POST['Customer_ID'];
+      $duedate = $_POST['duedate'];
+      $User_ID = $_SESSION['User_ID'];
+      $saveduedate =mysqli_query($conn, "INSERT INTO tbl_invoice(Customer_ID, duedate, User_ID) VALUES('$Customer_ID', '$duedate', '$User_ID') ") or die(mysqli_error($conn));
+      if(!$saveduedate){
+        echo "fail";
+      }else{
+        echo "success";
+      }
+    }
+
 ?>
