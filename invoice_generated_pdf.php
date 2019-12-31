@@ -7,10 +7,21 @@
           }else{
             $Customer_ID="0";
           }
+          if(isset($_GET['Invoice_ID'])){
+            $Invoice_ID = $_GET['Invoice_ID'];
+          }else{
+            $Invoice_ID="";
+          }
           $session_ID = $_SESSION['User_ID'];
       $customer_name= "";
       //die("SELECT * FROM tbl_customer_registraion where User_ID='$session_ID' AND Customer_ID = '$Customer_ID'");
-      $Query_name = mysqli_query($conn, "SELECT  cp.Customer_ID, cp.Product_ID, cp.User_ID,product_name,product_price,quantity FROM  tbl_cell_product cp, tbl_product p WHERE cp.Customer_ID='$Customer_ID' AND cp.Product_ID=p.Product_ID AND DATE(created_at)=CURDATE()" ) or die(mysqli_error($conn));
+      $Query_name = mysqli_query($conn, "SELECT  cp.Customer_ID, cp.Product_ID, cp.User_ID,product_description, product_name,product_price,quantity FROM  tbl_cell_product cp, tbl_product p WHERE cp.Customer_ID='$Customer_ID' AND cp.Product_ID=p.Product_ID AND DATE(created_at) = CURDATE()" ) or die(mysqli_error($conn));
+      $select_incoice = mysqli_query($conn, "SELECT Invoice_ID, duedate,Customer_ID FROM tbl_invoice WHERE Customer_ID='$Customer_ID' AND User_ID='$session_ID' AND DATE(created_at)=CURDATE()") or die(mysqli_error($conn));
+        while($Incoice_ID = mysqli_fetch_assoc($select_incoice)){
+          $Invoice_ID= $Incoice_ID['Invoice_ID'];
+          $duedate = $Incoice_ID['duedate'];
+          $Customer_ID = $Invoice_ID['Customer_ID'];
+        }
 
         $customer_details = mysqli_query($conn, "SELECT * FROM tbl_customer_registraion where User_ID='$session_ID' AND Customer_ID = '$Customer_ID'") or die(mysqli_error($conn));
 
@@ -25,33 +36,109 @@
               $client_block = $details['client_block'];
             }
           }
-          $htm ="<table width='50%' align='center'>
+          $select_user_info = mysqli_query($conn, "SELECT fullname, phone_number, email from user where User_ID='$session_ID'") or die(mysqli_error($conn));
+          while ($user = mysqli_fetch_assoc($select_user_info)){
+            $name = $user['fullname'];
+            $phone = $user['phone_number'];
+            $email = $user['email'];
+          }
+          $select_bank_account = mysqli_query($conn, "SELECT account_type, account_name, Account_number FROM tbl_company_account where User_ID='$session_ID' " ) or die(mysqli_error($conn));
+          while($account = mysqli_fetch_assoc($select_bank_account)){
+            $account_type = $account['account_type'];
+            $account_name = $account['account_name'];
+            $Account_number = $account['Account_number'];
+          }
+
+          $terms = mysqli_query($conn, "SELECT terms_condition FROM tbl_terms_condition where user_ID='$session_ID'") or die(mysqli_error($conn));
+          while($condition = mysqli_fetch_assoc($terms)){
+            $terms_condition = $condition['terms_condition'];
+          }
+          $select_company = mysqli_query($conn, "SELECT companyname, company_email, postaladdress,phonenumber,
+            company_region, company_district, company_street, company_block, company_logo, ceo_signature FROM tbl_company_registration where User_ID='$session_ID' " ) or die(mysqli_error($conn));
+          while($company = mysqli_fetch_assoc($select_company)){
+            $companyname = $company['companyname'];
+            $company_email = $company['company_email'];
+            $postaladdress = $company['postaladdress'];
+            $phonenumber = $company['phonenumber'];
+            $company_region = $company['company_region'];
+            $company_district = $company['company_district'];
+            $company_street = $company['company_street'];
+            $company_logo = $company['company_logo'];
+            $ceo_signature = $company['ceo_signature'];
+
+          }
+          $htm ="
+          <style>
+            div{
+              background-color:#CCEDFF;
+              display-content:none;
+              border-radius: 5px;
+              height:20px;
+
+            }
+          </style>
+          <table class='table' width='100%'>
+            <tr>
+              <td style='height: 200px; align:left;' ><p style='height: 150px; align:center;'>" .$company_logo."</p><br/><h2>INVOICE</h2></td>
+              <td style='height: 200px; align:right;' >" .$companyname. "|" .$postaladdress."' '" .$company_email."<br/>" .$name. "|" .$phone. "|" .$email. "</td>
+            </tr>
+          </table>
+          <div id=''>.</div>
+          <table width='100%' >
+          <tr><td  style='height: 200px;'>
+            <table width='100%' align='left' style='border: 2px solid black'>
+              <tbody>
+              <tr style='align-content:center; background-color:grey;border-radius: 5px;' ><th colspan='2' >INVOICE DETAILS</th></tr>
+              <tr>
+                <th>INVOICE#</th>
+                <td>00" .$Invoice_ID. "</td>
+              </tr>
+              <tr>
+                <th style='text-align:left;'> ACCOUNT TYPE</th>
+                <td>" . $account_type ."</td>
+              </tr>
+              <tr>
+                <th style='text-align:left;'> ACCOUNT NAME</th>
+                <td>" . $account_name ."</td>
+              </tr>
+              <tr>
+                <th style='text-align:left;'>ACCOUNT NUMBER </th>
+                <td>" . $Account_number ."</td>
+              </tr>
+              <tr>
+                <th style='text-align:left;'>INVOICE DATE</th>
+                <td style='background-color:#be6511; text-color:;#fdfefe'>" .$duedate. "</td>
+              </tr>
+              </tbody>
+            </table>
+            </td>
+            <td>TO</td>
+            <td style='height: 200px;'>
+            <table width='40%' align='center'>
                     <tbody>
+                    <tr><th colspan='2'>CUSTOMER DETAILS</th></tr>
                       <tr>
-                        <th>Customer Name</th>
-                        <td>" . $Client_name ."</td>
+                        <th style='text-align:right;'>Name</th>
+                        <td><b>" . $Client_name ."</b></td>
                       </tr>
+
                       <tr>
-                        <th>Customer Phone Number</th>
-                        <td>" . $Clint_PhoneNumber ."</td>
-                      </tr>
-                      <tr>
-                        <th>Email Address</th>
-                        <td>" . $client_email ."</td>
-                      </tr>
-                      <tr>
-                        <th>Customer Name</th>
-                        <td>" . $Clint_PhoneNumber ."</td>
-                      </tr>
-                      <tr>
-                        <th>Location</th>
+                        <th style='text-align:right;'>Location</th>
                         <td>" . $client_region .' '. $client_district . ' '. $client_street .' '. $client_block ."</td>
                       </tr>
+                      <tr>
+                        <th style='text-align:right;'>Phone Number</th>
+                        <td>" . $Clint_PhoneNumber ."</td>
+                      </tr>
+                      <tr>
+                        <th style='text-align:right;'>Email Address</th>
+                        <td>" . $client_email ."</td>
+                      </tr>
                     </tbody>
-                  </table>";
+                  </table>
+                </td>  </tr></table>";
 
-        $htm .="<p>Right moment</p><br><body style='background-color:grey; color:white; border:1px solid;text-align: right;'>
-                <table width='100%' >
+         $htm .="  <table width='100%' >
                     <thead style='background-color:blue;'>
                       <tr style='background-color:blue;'>
                         <th>#</th>
@@ -62,31 +149,48 @@
                       </tr>
                     </thead>
                     <tbody>";
-                    $Total = "0";
+                    $Total = 0;
+                    $VAT = 0;
+                    $General = 0;
                     if((mysqli_num_rows($Query_name))>0){
                       $num= 0;
                       while($name = mysqli_fetch_assoc($Query_name)){
                         $product_name = $name['product_name'];
                         $product_price=$name['product_price'];
                         $quantity = $name['quantity'];
+                        $product_description = $name['product_description'];
                         $Amount = $product_price * $quantity;
-
+                        $Total += $Amount;
                         $num++;
-                    $htm .= "<tr><td>$num</td><td align='center'>" . $product_name . "</td><td align='center'>" . $product_price . "</td><td align='center'>" . $quantity . "</td><td align='center'>" . $Amount . "</td></tr>";
+                    $htm .= "<tr><td width='5%' align='center'>$num</td><td align='center'>" . $product_name . "<br/>" .$product_description. "</td><td align='center'>" . $product_price . "</td><td align='center'>" . $quantity . "</td><td align='center'>" . $Amount . "</td></tr>";
                       }
 
                     }
-                    $Total += $Amount;
+
+                    $VAT = $Total * 0.2;
+                    $General = $VAT + $Total;
           $htm .= " </tbody>
                     <tfooter>
                       <tr>
-                        <th >TOTAL CASH REQUIRED</th><th><th><th>
-                        <th>" .$Total . "</th>
+                        <th colspan='4' align='left'><h3>TOTAL CASH REQUIRED</h3></th>
+                        <th style='background-color:#CCEDFF'>SUB TOTAL " .$Total . "<br/>VAT% &nbsp;&nbsp;".$VAT."<br/><span style=' font-size:18;'>TOTAL &nbsp;&nbsp;".$General."</span> </th>
                       </tr>
                     </tfooter>
                 </table>
               </body>";
 
+
+        $htm .="
+            <table class='table' width='100%'>
+              <tr>
+                <td><b>Terms and Condition</b><br/>".$terms_condition."</td>
+                <th>Invoice Duedate</th>
+                <td>". $duedate ."</td>
+              </tr>
+              <tr><td colspan='3' align='center'><b><h4>WELCOME</h4></b></td></tr>
+            </table>
+
+        ";
         ?>
 
 

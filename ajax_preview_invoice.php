@@ -21,7 +21,6 @@
           $product_list = mysqli_query($conn, "SELECT * FROM tbl_product where User_ID='$session_ID'");
 
 
-        $select_incoice = mysqli_query($conn, "SELECT Invoice_ID, duedate FROM tbl_invoice WHERE Customer_ID='$Customer_ID' AND User_ID='$session_ID' AND DATE(created_at)=CURDATE()") or die(mysqli_error($conn));
 
          ?>
       <fieldset>
@@ -75,105 +74,133 @@
     <center><legend align="center">SET INVOICE DATE</legend></center>
     <form action="" method="post">
       <div class="row" id="saveduedates">
-      <div class="col-md-3">
-        Due Date
-      </div>
-      <div class="col-md-6">
-        <input type="date" name="duedate" value="" id="duedate" class="form-control">
-      </div>
-      <div class="col-md-3">
-        <button type="button" class="btn btn-primary" name="btnduedate" onclick="saveduedate(<?php echo $Customer_ID; ?>), hidesavedate();">SAVE</button>
-      </div>
-    </div>
-
-      <div class="row" id="editduedate">
         <?php
-        if((mysqli_num_rows($select_incoice))>0){
-          while($Incoice_ID = mysqli_fetch_assoc($select_incoice)){
-            $invoiceID= $Incoice_ID['Invoice_ID'];
-            $duedate = $Incoice_ID['duedate'];
-            ?>
-            <div class="col-md-3">
-              Due Date
-            </div>
-            <div class="col-md-5">
-              <input type="date" name="duedate" value="<?php echo $duedate; ?>" id="duedate" class="form-control">
-            </div>
-            <div class="col-md-2">
-              <span><button type="button" class="btn btn-primary btn-block" name="btnduedate" >Edit Date</button></span>
-            </div>
-            <div class="col-md-2">
-              <span><a href="invoice_generated_pdf.php?Customer_ID=<?= $Customer_ID?>" class="btn btn-primary" target="_blank" id="invoicebtn">  Generate Invoice</a>
-              </span>
-            </div>
-            <?php
-        }  }else{
-            ?>
-            <div class="col-md-3">
-              Due Date
-            </div>
-            <div class="col-md-5">
-              <input type="date" name="duedate" value="<?php echo "Due date note set"; ?>" id="duedate" class="form-control">
-            </div>
-            <div class="col-md-2">
-              <span><button type="button" class="btn btn-primary btn-block" name="btnduedate" >Edit Date</button></span>
-            </div>
-            <div class="col-md-2">
-              <span><a href="invoice_generated_pdf.php?Customer_ID=<?= $Customer_ID?>" class="btn btn-primary" target="_blank" id="invoicebtn">  Generate Invoice</a>
-              </span>
-            </div>
-            <?php
-          }
-    ?>
+            $select_incoice = mysqli_query($conn, "SELECT Invoice_ID, duedate,Customer_ID FROM tbl_invoice WHERE Customer_ID='$Customer_ID' AND User_ID='$session_ID' AND DATE(created_at)=CURDATE()") or die(mysqli_error($conn));
 
-      </div>
-    </form>
+            if((mysqli_num_rows($select_incoice))>0){
+              while($Incoice_ID = mysqli_fetch_assoc($select_incoice)){
+                $Invoice_ID= $Incoice_ID['Invoice_ID'];
+                $duedate = $Incoice_ID['duedate'];
+                $Customer_ID = $Invoice_ID['Customer_ID'];
+                ?>
+                <table class="table" width="100%">
+                  <tr>
+                    <td>Invoice Duedate</td>
+                    <td><?php echo $duedate; ?></td>
+                    <td><a href="invoice_generated_pdf.php?Customer_ID=<?=$Customer_ID?>&Invoice_ID=<?=$Invoice_ID?>" class="btn btn-info" target="_blank">Print invoice</a> </td>
+                  </tr>
+                </table>
+                <?php
+               }
+            }else{
+              ?>
+              <div class="col-md-3">
+                Due Date
+              </div>
+              <div class="col-md-6">
+                <input type="date" name="duedate" value="" id="duedate" class="form-control">
+              </div>
+              <div class="col-md-2">
+                <span><button type="button" class="btn btn-primary btn-block" name="btnduedate" onclick="saveduedate(<?php echo $Customer_ID; ?>)">SAVE</button></span>
+              </div>
+              <?php
+            }
+        ?>
+
+    </div>
+  </form>
 
   </fieldset>
 
   <script>
-  $(document).ready(function(){
-   $("#editduedate").hide();
-  });
-  function invoice_generated(){
-    alert("invoice generated");
-    var Customer_ID = $('#selected_customer_id').val();
+  function saveduedate(Customer_ID){
+    var duedate = $("#duedate").val();
+    if(duedate==''){
+      $("#duedate").css("border", "2px solid red");
+    }else{
+      $("#duedate").css("border", "");
       $.ajax({
         type:'POST',
         url:'invoice_generated.php',
-        data:{Customer_ID:Customer_ID},
-        success:function(responce){
-        alert("invoice generated");
-        window.open('invoice_generated_pdf.php',"_blank");
+        data:{duedate:duedate,Customer_ID:Customer_ID,btnduedate:''},
+        success:function(){
+           document.location.reload();
         }
       });
+    }
+
   }
+  // function saveduedate(Customer_ID){
+  //      var duedate = $("#duedate").val();
+  //      if(duedate==''){
+  //        $("#duedate").css("border", "2px solid red");
+  //      }else{
+  //        $("#duedate").css("border", "");
+  //      $.ajax({
+  //        type:'POST',
+  //        url:'invoice_generated.php',
+  //        data:{duedate:duedate,Customer_ID:Customer_ID,btnduedate:''},
+  //        success:function(responce){
+  //          alert(Saved DueDate successfully);
+  //          $("#invoicedate").html(responce);
+  //        }
+  //      });
+  //     }
+  //  }
 
-   function saveduedate(Customer_ID){
-       var duedate = $("#duedate").val();
-       if(duedate==''){
-         $("#duedate").css("border", "2px solid red");
-       }else{
-         $("#duedate").css("border", "");
+   // function takegeneratedInvoice(Invoice_ID){
+   //   alert(Invoice_ID);
+   //   var Customer_ID= $("#Customer_ID").val();
+   //   if(Invoice_ID==""){
+   //     $("#duedate").css("border", "2px solid red");
+   //   }else{
+   //     $("#duedate").css("border", "");
+   //     $.ajax({
+   //       type:'GET',
+   //       url:'invoice_generated_pdf.php',
+   //       data:{Invoice_ID:Invoice_ID, Customer_ID:Customer_ID},
+   //       success:function(responce){
+   //         window.open('invoice_generated_pdf.php','_blank');
+   //       }
+   //     });
+   //   }
+   // }
 
-       $.ajax({
-         type:'POST',
-         url:'ajax_preview_invoice.php',
-         data:{duedate:duedate,Customer_ID:Customer_ID},
-         success:function(responce){
-           $("#editduedate").show();
 
-         }
-       });
-      }
-   }
-function hidesavedate(){
-  var duedate = $("#duedate").val();
-  if(duedate==''){
-    $("#duedate").css("border", "2px solid red");
-  }else{
-    $("#duedate").css("border", "");
-  $("#saveduedates").hide();
-  }
-}
+   // function showdate(){
+   //   var Invoice_ID = $("#select_invoice").val();
+   //   var Customer_ID= $("#Customer_ID").val();
+   //   $.ajax({
+   //     type:'POST',
+   //     url:'invoice_generated.php',
+   //     data:{Invoice_ID:Invoice_ID, Customer_ID:Customer_ID},
+   //     success:function (responce){
+   //       $("#invoicedate").html(responce);
+   //     }
+   //   });
+   // }
+    // function hidesavedate(){
+    //   var duedate = $("#duedate").val();
+    //   if(duedate==''){
+    //     $("#duedate").css("border", "2px solid red");
+    //   }else{
+    //     $("#duedate").css("border", "");
+    //   $("#saveduedates").hide();
+    //   }
+    // }
+
+
+    // function invoice_generated(){
+    //   alert("invoice generated");
+    //   var Customer_ID = $('#selected_customer_id').val();
+    //     $.ajax({
+    //       type:'POST',
+    //       url:'invoice_generated.php',
+    //       data:{Customer_ID:Customer_ID},
+    //       success:function(responce){
+    //       alert("invoice generated");
+    //       window.open('invoice_generated_pdf.php',"_blank");
+    //       }
+    //     });
+    // }
   </script>

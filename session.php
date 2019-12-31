@@ -9,7 +9,7 @@
   $session_fullname = $rows['fullname'];
   $session_password = $rows['password'];
   $session_username = $rows['user_name'];
-  $phonenumber = $rows['phone_number'];
+  $session_phonenumber = $rows['phone_number'];
   $session_email= $rows['email'];
 
 
