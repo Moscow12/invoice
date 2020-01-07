@@ -5,25 +5,25 @@
           if(isset($_GET['Customer_ID'])){
             $Customer_ID =$_GET['Customer_ID'];
           }else{
-            $Customer_ID="0";
+            $Customer_ID=0;
           }
           if(isset($_GET['Invoice_ID'])){
             $Invoice_ID = $_GET['Invoice_ID'];
           }else{
-            $Invoice_ID="";
+            $Invoice_ID=0;
           }
           $session_ID = $_SESSION['User_ID'];
       $customer_name= "";
-      //die("SELECT * FROM tbl_customer_registraion where User_ID='$session_ID' AND Customer_ID = '$Customer_ID'");
-      $Query_name = mysqli_query($conn, "SELECT  cp.Customer_ID, cp.Product_ID, cp.User_ID,product_description, product_name,product_price,quantity FROM  tbl_cell_product cp, tbl_product p WHERE cp.Customer_ID='$Customer_ID' AND cp.Product_ID=p.Product_ID AND DATE(created_at) = CURDATE()" ) or die(mysqli_error($conn));
+      $Query_name = mysqli_query($conn, "SELECT  cp.Customer_ID, cp.Product_ID, cp.User_ID,product_description, product_name,cp.quantity,Selling_price,product_name,product_unit FROM tbl_product tp, tbl_product_store ps, tbl_cell_product cp WHERE cp.Customer_ID='$Customer_ID' AND cp.Product_ID= ps.Product_ID AND ps.Product_ID=tp.Product_ID AND DATE(cp.created_at) = CURDATE()" ) or die(mysqli_error($conn));
       $select_incoice = mysqli_query($conn, "SELECT Invoice_ID, duedate,Customer_ID FROM tbl_invoice WHERE Customer_ID='$Customer_ID' AND User_ID='$session_ID' AND DATE(created_at)=CURDATE()") or die(mysqli_error($conn));
-        while($Incoice_ID = mysqli_fetch_assoc($select_incoice)){
-          $Invoice_ID= $Incoice_ID['Invoice_ID'];
-          $duedate = $Incoice_ID['duedate'];
-          $Customer_ID = $Invoice_ID['Customer_ID'];
-        }
+        while($Incoice = mysqli_fetch_assoc($select_incoice)){
+          $Invoice_ID= $Incoice['Invoice_ID'];
+          $duedate = $Incoice['duedate'];
 
-        $customer_details = mysqli_query($conn, "SELECT * FROM tbl_customer_registraion where User_ID='$session_ID' AND Customer_ID = '$Customer_ID'") or die(mysqli_error($conn));
+        }
+        //die("SELECT Invoice_ID, duedate,Customer_ID FROM tbl_invoice WHERE Customer_ID='$Customer_ID' AND User_ID='$session_ID' AND DATE(created_at)=CURDATE()");
+
+        $customer_details = mysqli_query($conn, "SELECT * FROM tbl_customer_registraion where User_ID='$session_ID' AND Customer_ID ='$Customer_ID'") or die(mysqli_error($conn));
 
           if((mysqli_num_rows($customer_details))>0){
             while($details = mysqli_fetch_assoc($customer_details)){
@@ -36,6 +36,7 @@
               $client_block = $details['client_block'];
             }
           }
+
           $select_user_info = mysqli_query($conn, "SELECT fullname, phone_number, email from user where User_ID='$session_ID'") or die(mysqli_error($conn));
           while ($user = mysqli_fetch_assoc($select_user_info)){
             $name = $user['fullname'];
@@ -76,11 +77,23 @@
               height:20px;
 
             }
+            #product{
+              border-top: 2px solid blue;
+              border-left: 2px solid blue;
+              border-bottom: 2px solid blue;
+              border-right: 2px solid blue;
+              border-radius: 5px;
+            }
+            body {
+                overflow:hidden;
+                height:100vh;
+                background:radial-gradient(circle at 50% 120px, #c6a5f0 0px, #c6a5f0 120px, #b793ec 120px, #b793ec 200px, #ac85e8 200px, #ac85e8 320px, #a379e5 320px, #a379e5, #896ae1 500px, #896ae1 100% );
+              }
           </style>
           <table class='table' width='100%'>
             <tr>
-              <td style='height: 200px; align:left;' ><p style='height: 150px; align:center;'>" .$company_logo."</p><br/><h2>INVOICE</h2></td>
-              <td style='height: 200px; align:right;' >" .$companyname. "|" .$postaladdress."' '" .$company_email."<br/>" .$name. "|" .$phone. "|" .$email. "</td>
+              <td style='height: 150px; width:40%; align:left;' ><p style='height: 150px; align:center;' >" .$company_logo."</p><br/><h2>INVOICE</h2></td>
+              <td style='height:150px;   width:20%; align:right;' >" .$companyname. "<br/>" .$postaladdress."<br/>" .$company_email.".<br/>" .$name. "|" .$phone. "|" .$email. "</td>
             </tr>
           </table>
           <div id=''>.</div>
@@ -138,7 +151,7 @@
                   </table>
                 </td>  </tr></table>";
 
-         $htm .="  <table width='100%' >
+         $htm .="  <table width='100%' id='product' >
                     <thead style='background-color:blue;'>
                       <tr style='background-color:blue;'>
                         <th>#</th>
@@ -148,7 +161,7 @@
                         <th>Amount</th>
                       </tr>
                     </thead>
-                    <tbody>";
+                    <tbody Style='border-bottom: 2px solid blue;'>";
                     $Total = 0;
                     $VAT = 0;
                     $General = 0;
@@ -156,13 +169,13 @@
                       $num= 0;
                       while($name = mysqli_fetch_assoc($Query_name)){
                         $product_name = $name['product_name'];
-                        $product_price=$name['product_price'];
+                        $price = $name['Selling_price'];
                         $quantity = $name['quantity'];
                         $product_description = $name['product_description'];
-                        $Amount = $product_price * $quantity;
+                        $Amount = $price * $quantity;
                         $Total += $Amount;
                         $num++;
-                    $htm .= "<tr><td width='5%' align='center'>$num</td><td align='center'>" . $product_name . "<br/>" .$product_description. "</td><td align='center'>" . $product_price . "</td><td align='center'>" . $quantity . "</td><td align='center'>" . $Amount . "</td></tr>";
+                    $htm .= "<tr><td width='5%' align='center'>$num</td><td align='center'>" . $product_name . "<br/>" .$product_description. "</td><td align='center'>" . $price . "</td><td align='center'>" . $quantity . "</td><td align='center'>" . $Amount . "</td></tr>";
                       }
 
                     }
@@ -170,8 +183,8 @@
                     $VAT = $Total * 0.2;
                     $General = $VAT + $Total;
           $htm .= " </tbody>
-                    <tfooter>
-                      <tr>
+                    <tfooter >
+                      <tr >
                         <th colspan='4' align='left'><h3>TOTAL CASH REQUIRED</h3></th>
                         <th style='background-color:#CCEDFF'>SUB TOTAL " .$Total . "<br/>VAT% &nbsp;&nbsp;".$VAT."<br/><span style=' font-size:18;'>TOTAL &nbsp;&nbsp;".$General."</span> </th>
                       </tr>

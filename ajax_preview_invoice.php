@@ -4,7 +4,7 @@
         if(isset($_POST['Customer_ID'])){
           $Customer_ID =$_POST['Customer_ID'];
         }else{
-          $Customer_ID="0";
+          $Customer_ID=0;
         }
         $session_ID = $_SESSION['User_ID'];
 
@@ -40,14 +40,15 @@
 
           <?php
 
-              $product_sold_list = mysqli_query($conn, "SELECT Customer_ID,  tp.Product_ID, product_name, product_price, quantity  FROM tbl_product tp, tbl_cell_product cp where cp.User_ID='$session_ID' AND tp.Product_ID=cp.Product_ID AND Customer_ID='$Customer_ID'AND DATE(created_at)=CURDATE()") or die(mysqli_error($conn));
+              $product_sold_list = mysqli_query($conn, "SELECT Customer_ID,  cp.Quantity, ps.Product_ID, Cell_ID, Selling_price,product_name,product_unit FROM tbl_product tp, tbl_product_store ps, tbl_cell_product cp where cp.User_ID='$session_ID' AND ps.Product_ID=cp.Product_ID AND tp.Product_ID=cp.Product_ID AND Customer_ID='$Customer_ID'AND DATE(cp.created_at)=CURDATE()") or die(mysqli_error($conn));
               if((mysqli_num_rows($product_sold_list))>0){
                 $num=0;
                 $Total="";
                 while($rows = mysqli_fetch_assoc($product_sold_list)){
+                  $Cell_ID = $rows['Cell_ID'];
                   $product_name = $rows['product_name'];
-                  $price = $rows['product_price'];
-                  $quantity = $rows['quantity'];
+                  $price = $rows['Selling_price'];
+                  $quantity = $rows['Quantity'];
                   $amount = $price * $quantity;
                   $Total += $amount;
                   $num++;
@@ -58,7 +59,7 @@
                   echo "<td>".$amount."</td></tr>";
 
                 }
-                echo "<tr><th colspan='4'>Total</th><td >".$Total."</td></tr>";
+                echo "<tr><th colspan='4' align='center'>Total</th><td >".$Total."</td></tr>";
 
               }else{
                 echo "<tr><td colspan='5'>No Product Sold Today </td></tr>";
@@ -78,16 +79,16 @@
             $select_incoice = mysqli_query($conn, "SELECT Invoice_ID, duedate,Customer_ID FROM tbl_invoice WHERE Customer_ID='$Customer_ID' AND User_ID='$session_ID' AND DATE(created_at)=CURDATE()") or die(mysqli_error($conn));
 
             if((mysqli_num_rows($select_incoice))>0){
-              while($Incoice_ID = mysqli_fetch_assoc($select_incoice)){
-                $Invoice_ID= $Incoice_ID['Invoice_ID'];
-                $duedate = $Incoice_ID['duedate'];
-                $Customer_ID = $Invoice_ID['Customer_ID'];
+              while($Incoice = mysqli_fetch_assoc($select_incoice)){
+                $Invoice_ID= $Incoice['Invoice_ID'];
+                $duedate = $Incoice['duedate'];
+              $Customer_ID = $Incoice['Customer_ID'];
                 ?>
                 <table class="table" width="100%">
                   <tr>
                     <td>Invoice Duedate</td>
                     <td><?php echo $duedate; ?></td>
-                    <td><a href="invoice_generated_pdf.php?Customer_ID=<?=$Customer_ID?>&Invoice_ID=<?=$Invoice_ID?>" class="btn btn-info" target="_blank">Print invoice</a> </td>
+                    <td><a href="invoice_generated_pdf.php?Customer_ID=<?=$Customer_ID?>&Invoice_ID=<?=$Invoice_ID?>" class="btn btn-info" target="_blank">Print <span class="fa fa-print"></span></a> </td>
                   </tr>
                 </table>
                 <?php
@@ -124,6 +125,7 @@
         url:'invoice_generated.php',
         data:{duedate:duedate,Customer_ID:Customer_ID,btnduedate:''},
         success:function(){
+           alert('Saved successfully');
            document.location.reload();
         }
       });

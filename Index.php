@@ -28,8 +28,16 @@
   <!-- Google Font -->
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+<style>
+body{
+overflow:hidden;
+height:100vh;
+background:radial-gradient(circle at 50% 120px, #c6a5f0 0px, #c6a5f0 120px, #b793ec 120px, #b793ec 200px, #ac85e8 200px, #ac85e8 320px, #a379e5 320px, #a379e5, #896ae1 500px, #896ae1 100% );
+}
+</style>
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page" >
 <div class="login-box">
   <div class="login-logo">
     <a href=""><b>Invoice</b></a>

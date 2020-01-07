@@ -9,6 +9,7 @@ if(!isset($_SESSION['User_ID'])){
 ?>
 
 <style>
+
    .example-modal .modal {
      position: relative;
      top: auto;
@@ -137,7 +138,7 @@ desired effect
               <li class="user-footer">
                 <div class="pull-left tab">
                   <button class="tablinks btn btn-default btn-flat" onclick="openform(event, 'updateProfile')">Profie</button>
-
+                  <button class="tablinks" onclick="openform(event, 'upload')">Profile Photo</button>
                 </div>
                 <div class="pull-right">
                   <a href="logout.php" class="btn btn-default btn-flat">Sign out</a>
@@ -211,8 +212,78 @@ desired effect
           <button class="tablinks" onclick="openform(event, 'Product')">PPODUCT</button>
           <button class="tablinks" id='Client_tab'onclick="openform(event, 'Client')">CLIENT</button>
           <button class="tablinks" id='cellproduct_tab' onclick="openform(event, 'cellproduct')">CELL PRODUCT</button>
-          <button class="tablinks" onclick="openform(event, 'upload')">INVOICE</button>
+          <button class="tablinks" onclick="openform(event, 'invoicetoday')">INVOICE</button>
 
+        </div>
+
+        <div class="tabcontent" id="invoicetoday">
+          <h3><center>INVOIVE GENERATED TODAY </center></h3>
+          <table class="table" width="100%">
+            <tr>
+                <th>#</th>
+                <th>Custome name</th>
+                <th>Invoice Duedate</th>
+                <th>Action</th>
+            </tr>
+          <?php
+              $select_incoice = mysqli_query($conn, "SELECT Invoice_ID, Client_name, duedate, i.Customer_ID FROM tbl_customer_registraion cr, tbl_invoice i WHERE i.Customer_ID=cr.Customer_ID AND i.User_ID='$session_ID' AND DATE(created_at)=CURDATE() ORDER BY Invoice_ID DESC") or die(mysqli_error($conn));
+              $nams = 0;
+              if((mysqli_num_rows($select_incoice))>0){
+                while($Incoice = mysqli_fetch_assoc($select_incoice)){
+                  $Invoice_ID= $Incoice['Invoice_ID'];
+                  $duedate = $Incoice['duedate'];
+                  $customers = $Incoice['Client_name'];
+                  $Customer_ID = $Incoice['Customer_ID'];
+                  $nams++;
+                  ?>
+
+                    <tr>
+                      <td><?php echo $nams; ?></td>
+                      <td><?php echo $customers; ?></td>
+                      <td><?php echo $duedate; ?></td>
+                      <td><a href="invoice_generated_pdf.php?Customer_ID=<?=$Customer_ID?>&Invoice_ID=<?=$Invoice_ID?>" class="btn btn-info" target="_blank">Print invoice</a> </td>
+                    </tr>
+
+                  <?php
+                 }
+              }else{
+                echo "No invoice generated today";
+              }
+                ?>
+            </table>
+            <hr>
+            <table class="table table-responsive">
+              <?php
+              $sql_date_time = mysqli_query($conn,"select now() as Date_Time ") or die(mysqli_error($conn));
+                  while($date = mysqli_fetch_array($sql_date_time)){
+                      $Current_Date_Time = $date['Date_Time'];
+                  }
+                  $Filter_Value = substr($Current_Date_Time,0,11);
+                  $Start_Date = $Filter_Value.' 00:00';
+                  $End_Date = $Current_Date_Time;
+
+              ?>
+              <tr>
+                <td colspan="4"><center> FILTER SALES REPORT</center></td>
+              </tr>
+              <tr>
+                <td><input type="date" name="" value="<?= $Start_Date ?>"  id="start_date"></td>
+                <td><input type="date" name="" value="<?= $End_Date ?>"  id="end_date" ></td>
+                <td><input type="button" name="filterbtn" class="btn btn-primary" value="FILTER" onclick="filtersalesreport()"></td>
+                <td><input type="button" name="" value="PRINT RECORD" class="btn btn-info" ></td>
+              </tr>
+              <tr>
+                <th>SN</th>
+                <th>PRODUCT NAME</th>
+                <th>QUANTITY</th>
+                <th>AMOUNT</th>
+              </tr>
+              <tbody id="sales_record">
+                <tr>
+                  <td colspan="4" id='class_loader'></td>
+                </tr>
+              </tbody>
+            </table>
         </div>
         <div id="upload" class="tabcontent">
           <h3><center>Upload Profile image </center></h3>
@@ -276,28 +347,108 @@ desired effect
           </p>
         </div>
         <div id="Product" class="tabcontent">
+          <center><center style="align-content:right;"><button class="tablinks btn btn-info" onclick="openform(event, 'Add_new_product')" name="button">ADD NEW PRODUCT</button></center>
+
+
+
+          </p>
+          <div class=" col-sm-12 col-md-12 row">
+            <form class="" action="" method="post">
+              <table class='table table-responsive' style='background:#FDFFEF'>
+                  <caption><b><center>STORE NEW PRODUCT TO STOCK</center></b></caption>
+                <tbody>
+                  <tr>
+                    <th>Product Name</th>
+                    <th>Buying Price</th>
+                    <th>Selling Product</th>
+                    <th>Quantity</th>
+                    <th>Action</th>
+                  </tr>
+                  <tr>
+                    <td>
+                    <select name="Product_ID" class="form-control" id="Product_ID">
+                        <option value="">~~select Item~~</option>
+                    <?php
+                      $select_product = mysqli_query($conn, "SELECT product_name, Product_ID, product_unit FROM tbl_product ORDER BY(product_name) ASC") or die(mysqli_error($conn));
+                        if((mysqli_num_rows($select_product))>0){
+                          while($product_result = mysqli_fetch_assoc($select_product)){
+                            $product_name = $product_result['product_name'];
+                            $Product_ID = $product_result['Product_ID'];
+                            $unit =$product_result['product_unit'];
+                            echo "<option td value='$Product_ID' >$product_name ($unit)</option>";
+                          }
+                        }else{
+                          echo "<td>NO product found add One.</td>";
+                        }
+                    ?>
+                    </select>
+                  </td>
+                  <td><input type="text" name="Selling_price" value="" id="Selling_price"> </td>
+                  <td><input type="text" name="buying_price" value="" id="buying_price"> </td>
+                  <td><input type="text" name="Quantity" value="" id="Quantity"> </td>
+                  <td><button type="button" name="stock" class="btn btn-primary btn-block" onclick="stock_product()">STORE</button> </td>
+                  </tr>
+                </tbody>
+              </table>
+            </form>
+          </div>
+          <div class="container row" style='margin-right:10px;'>
+            <form action="" method="get">
+            <table class="table table-responsive" style='background:#FAFFEF;'>
+              <caption><b><center>PRODUCT IN STOCK</center></b></caption>
+              <tr>
+                <th>SN</th>
+                <th>PRODUCT NAME</th>
+                <th>BUYING PRICE</th>
+                <th>SELLING PRICE</th>
+                <th>QUANTITY IN STORE</th>
+              </tr>
+              <tbody id="product_in_store">
+
+              </tbody>
+            </table>
+          </form>
+          </div>
+        </div>
+
+        <div class="tabcontent" id="Add_new_product">
           <h3><center>REGISTER PRODUCT </center></h3>
           <p>
             <form action="productDB.php" method="post">
                 <div class="form-group row">
-                    <label for="" class="col-sm-3 col-form-label">Product name</label>
-                    <div class="col-sm-9">
+                    <label for="" class="col-sm-2 col-form-label">Product name</label>
+                    <div class="col-sm-2">
                       <input type="text" class="form-control" id="" name="product_name" placeholder="Account name">
                     </div>
-              </div>
-                <div class="form-group row">
-                    <label for="" class="col-sm-3 col-form-label">Product Description</label>
-                    <div class="col-sm-9">
+                    <!-- <label for="" class="col-sm-2 col-form-label">Product Unit</label> -->
+                    <div class="col-sm-2" class="form-control">
+                        <select name="product_unit" >
+                            <option value="">~Product Unit~</option>
+                            <option value="Kg">Kilogram</option>
+                            <option value="m">meter</option>
+                            <option value="bucket">Bucket</option>
+                            <option value="pc">PC(s)</option>
+                            <option value="bug">Bug(s)</option>
+                            <option value="Package">Package</option>
+                            <option value="litre">Litre</option>
+                        </select>
+                    </div>
+
+                    <label for="" class="col-sm-2 col-form-label">Product Description</label>
+                    <div class="col-sm-3">
                         <textarea class="form-control" name="product_description" rows="1"></textarea>
                     </div>
+                    <div class="col-md-1">
+                      <button type="submit"  class="btn btn-info" name="productitem">Submit</button>
+                    </div>
                 </div>
-                <div class="form-group row">
+                <!-- <div class="form-group row">
                     <label for="" class="col-sm-3 col-form-label">Product Price</label>
                     <div class="col-sm-3">
                         <input type="text" class="form-control" id="" placeholder="Product Price" name="product_price">
                     </div>
-                    <label for="" class="col-sm-3 col-form-label">Product Unit</label>
-                    <div class="col-sm-3" class="form-control">
+                    <label for="" class="col-sm-2 col-form-label">Product Unit</label>
+                    <div class="col-sm-2" class="form-control">
                         <select name="product_unit" >
                             <option value="">~~select unit~~</option>
                             <option value="Kg">Kilogram</option>
@@ -309,12 +460,13 @@ desired effect
                             <option value="litre">Litre</option>
                         </select>
                     </div>
-                </div>
-                <button type="submit"  class="btn btn-info" name="productitem">Submit</button>
-            </form>
-          </p>
-        </div>
+                    <div class="col-md-2">
+                      <button type="submit"  class="btn btn-info" name="productitem">Submit</button>
+                    </div>
+                </div> -->
 
+            </form>
+        </div>
         <div id="Client" class="tabcontent">
           <center><h3></h3></center> <center style="align-content:right;"><button class="tablinks btn btn-info" onclick="openform(event, 'Add_new_CLient')" name="button">ADD NEW </button></center>
           <?php
@@ -657,6 +809,73 @@ desired effect
 <!-- REQUIRED JS SCRIPTS -->
 <?php include("footer.php"); ?>
 <script>
+  $(document).ready(function(){
+    product_instock();
+  });
+  function stock_product(){
+    var Product_ID = $("#Product_ID").val();
+    var Selling_price = $("#Selling_price").val();
+    var buying_price = $("#buying_price").val();
+    var Quantity = $("#Quantity").val();
+    if(Product_ID==''){
+      $('#Product_ID').css("border","2px solid red");
+    }else if(Selling_price==''){
+      $('#Selling_price').css("border","2px solid red");
+    }else if(buying_price==''){
+      $('#buying_price').css("border","2px solid red");
+    }else if(Quantity==''){
+      $("#Quantity").css("border","2px solid red");
+    }else{
+      $("#Product_ID").css("border","");
+      $("#Selling_price").css("border","");
+      $("#buying_price").css("border","");
+      $("#Quantity").css("border","");
+    //alert(Product_ID +Selling_price +buying_price +Quantity);
+    $.ajax({
+      type:'POST',
+      url:'Store_productin_stock.php',
+      data:{Product_ID:Product_ID, Selling_price:Selling_price, buying_price:buying_price, Quantity:Quantity, stock:''},
+      success:function(responce){
+        alert("DATA SAVE");
+        product_instock();
+      }
+    });
+    }
+  }
+  function product_instock(){
+    $.ajax({
+      type:'POST',
+      url:'Store_productin_stock.php',
+      data:{},
+      success:function(responce){
+        $("#product_in_store").html(responce);
+      }
+    });
+  }
+  function filtersalesreport(){
+    var start_date = $("#start_date").val();
+    var end_date = $("#end_date").val();
+    if(start_date ==''){
+      $('#start_date').css("border","2px solid red");
+    }else if(end_date==''){
+      $('#end_date').css("border","2px solid red");
+    }else {
+      $('#start_date').css("border","");
+      $('#end_date').css("border","");
+      document.getElementById('class_loader').innerHTML = '<div align="center" style="" id="progressStatus"><img src="images/ajax-loader_1.gif" width="" style="border-color:white "></div>';
+      alert(start_date  + end_date);
+      $.ajax({
+        type:'post',
+        url:'ajax_today_product_sold.php',
+        data:{start_date:start_date, end_date:end_date, filterbtn:''},
+        success:function(responce){
+          $("#filtersalesreport").html(responce);
+        }
+      });
+    }
+
+
+  }
   function capture_customer_id(Customer_ID){
 //alert("hhhhhhhhhh");
     $.ajax({
@@ -680,7 +899,12 @@ function cell_that_product(Product_ID){
 var inp_id = "id"+Product_ID;
   var Customer_ID = $('#selected_customer_id').val();
   var quantity = $('#'+inp_id).val();
+  var balance = $('#balance').val();
+  if(quantity > balance){
+      $("#"+inp_id).css("border","2px solid red");
+      alert('Stock is less than the value CHANGE QUANTITY VALUE');
 
+  }else{
  if(quantity==""){
     $("#"+inp_id).css("border","2px solid red");
     exit();
@@ -697,9 +921,9 @@ var inp_id = "id"+Product_ID;
   });
 }
 }
+}
 function today_product_sold(){
     var Customer_ID = $('#selected_customer_id').val();
-
     $.ajax({
       type:'POST',
       url:'ajax_today_product_sold.php',
@@ -709,6 +933,16 @@ function today_product_sold(){
         $("#product_sold_today").html(responce);
       }
     });
+}
+function remove_product(Cell_ID){
+  $.ajax({
+    type:'POST',
+    url:'ajax_today_product_sold.php',
+    data:{Cell_ID:Cell_ID, removebtn:''},
+    success:function(responce){
+      today_product_sold();
+    }
+  });
 }
 function preview_invoice(){
   var Customer_ID = $('#selected_customer_id').val();

@@ -11,12 +11,15 @@
 
 
 <!-- jQuery 3 -->
+<link rel="stylesheet" type="text/css" href="js/jquery.datetimepicker.css"/>
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- AdminLTE App -->
 <script src="dist/js/adminlte.min.js"></script>
+<script src="js/jquery.datetimepicker.js" type="text/javascript"></script>
 <script src="jquery-ui.js"></script>
+<script src="js/select2.min.js"></script>
 
 
 <!-- Optionally, you can add Slimscroll and FastClick plugins.

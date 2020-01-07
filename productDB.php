@@ -14,7 +14,7 @@ session_start();
         if(!$account){
           die("Couldn't insert  data" .mysqli_error($conn) );
         }else{
-        header("location: dashboard.php");
+          header("location: dashboard.php");
         }
       }
 

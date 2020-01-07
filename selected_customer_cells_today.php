@@ -18,7 +18,7 @@
     }else{
       echo "<h5 style='color:red'>No customer selected click Client button to select Customer</h5>";
     }
-      $product_list = mysqli_query($conn, "SELECT * FROM tbl_product where User_ID='$session_ID'");
+      $product_list = mysqli_query($conn,"SELECT Quantity,ps.Product_ID,Selling_price,buying_price,product_name,product_unit FROM tbl_product tp, tbl_product_store ps WHERE ps.User_ID='$session_ID' AND ps.Product_ID=tp.Product_ID") or die(mysqli_error($conn));
 
      ?>
           <p>
@@ -31,8 +31,8 @@
                           <th>#</th>
                           <th>Product name</th>
                           <th>Price(Tsh.)</th>
+                          <th>Balance</th>
                           <th>Quantity</th>
-                          <th>Total Amount</th>
                           <th>Action</th>
                         </thead>
 
@@ -44,16 +44,17 @@
                               while($rows = mysqli_fetch_assoc($product_list)){
                                 $Product_ID = $rows['Product_ID'];
                                 $item = $rows['product_name'];
-                                $price = $rows['product_price'];
+                                $price = $rows['Selling_price'];
                                 $unit = $rows['product_unit'];
+                                $balance = $rows['Quantity'];
 
                           ?>
                           <tr id="cellselected">
                             <td><?php echo $num++; ?></td>
                             <td align="center"><?php echo $item;?> (<?php echo $unit; ?>)<input name="Product_ID"  value="<?php echo $Product_ID; ?>" style="display:none"></td>
                             <td align="center"><?php echo $price; ?><input id="price"style="display:none" value="<?php echo $price; ?>"></td>
+                            <td align="center"><?php echo $balance;?><input id='balance'  value="<?php echo $balance; ?>" style="display:none"></td>
                             <td><input class="form-control" name="quantity" id="<?php echo "id".$Product_ID; ?>" placeholder="Quantity" ></td>
-                            <td align="center"><input disabled id="amount"></td>
                             <td><input  type="button" class="btn btn-info" value="CELL"  onclick="cell_that_product('<?php echo $Product_ID;?>')"></td>
                           </tr>
                         <?php }?>
@@ -79,6 +80,7 @@
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Amount</th>
+                            <th>Remove</th>
                           </thead>
                           <tbody id="product_sold_today" >
 
