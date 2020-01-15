@@ -20,6 +20,8 @@
 <script src="js/jquery.datetimepicker.js" type="text/javascript"></script>
 <script src="jquery-ui.js"></script>
 <script src="js/select2.min.js"></script>
+<script type="text/javascript" src="bower_components/select2/dist/js/select2.js"></script>
+  <script type="text/javascript" src="bower_components/select2/dist/js/select2.min.js"></script>
 
 
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
