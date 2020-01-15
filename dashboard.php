@@ -61,6 +61,9 @@ if(!isset($_SESSION['User_ID'])){
    fieldset{
      border: 1px solid #ccc;
    }
+   #attach_cat_icon{
+       transform: rotate(45deg);
+   }
  </style>
 <!--
 BODY TAG OPTIONS:
@@ -191,7 +194,19 @@ desired effect
         <li ><button class="tablinks btn-block"  onclick="openform(event, 'adduser_form')"><i class="fa fa-plus"></i><span>&nbsp;&nbsp;&nbsp;&nbsp; REGISTER SYSTEM USER</span></button></li>
         <li> <button class="tablinks  btn-block" onclick="openform(event, 'show_company_register')"><i class="fa fa-book"></i>&nbsp;&nbsp;&nbsp;&nbsp;<span>REGISTER COMPANY</span></button></li>
         <li> <button class="tablinks btn-block" onclick="openform(event, 'company_account_form')"><i class="fa fa fa-fw fa-bank"></i>&nbsp;&nbsp;&nbsp;&nbsp;<span>COMPANY ACCOUNT</span></button></li>
-
+        <li class="treeview">
+        <a href="#" class="btn btn-primary btn-block"><i class="fa fa-link"></i> <span>COSTOMER FORMS</span>
+          <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+          <li> <button class="tablinks btn-block" onclick="openform(event, 'Quotation_form')">QUOTATION</button></li>
+          <li> <button class="tablinks btn-block" onclick="openform(event, 'local_purchase_form'), lpo()"><i class="fa fa fa-fw fa-bank"></i>&nbsp;&nbsp;&nbsp;&nbsp;<span>LOCAL PURCHASE ORDER</span></button></li>
+          <li> <button  class="tablinks btn-block" onclick="openform(event, 'profomer_form')"><i class="fa fa fa-fw fa-bank"></i>&nbsp;&nbsp;&nbsp;&nbsp;<span>PROFORMER INVOICE</span></button></li>
+          <li><button class="btn btn-info"  onclick="company_logo_dialog()" >Edit User</button> </li>
+        </ul>
+      </li>
       </ul>
       <!-- /.sidebar-menu -->
     </section>
@@ -211,11 +226,139 @@ desired effect
         <div class="tab col-xs-12 col-sm-12 col-md-12">
           <button class="tablinks" onclick="openform(event, 'Product')">PPODUCT</button>
           <button class="tablinks" id='Client_tab'onclick="openform(event, 'Client')">CLIENT</button>
-          <button class="tablinks" id='cellproduct_tab' onclick="openform(event, 'cellproduct')">CELL PRODUCT</button>
+          <button class="tablinks" id='cellproduct_tab' onclick="openform(event, 'cellproduct')">SALE PRODUCT</button>
           <button class="tablinks" onclick="openform(event, 'invoicetoday')">INVOICE</button>
 
         </div>
+        <?php
+            $customers_list = mysqli_query($conn, "SELECT Customer_ID,client_region,client_street, Client_name FROM tbl_customer_registraion where User_ID='$session_ID'") or die(mysqli_error($conn));
+        ?>
+        <div class="tabcontent" id="Quotation_form">
+          <fieldset>
+            <div class="" id="div_show_product_sold_now">
+                        <center><h3 >PRODUCT SOLD TO <span style="background-color:#ccffcc;"><?php echo $customer_name; ?></span>  </h3></center>
+                        <input type="text" hidden name="" id="Customer_ID" value="<?php echo $Customer_ID; ?>">
 
+                        <fieldset>
+                          <div style='height:200px;overflow-y:scroll'>
+                            <table class="table table-striped table-responsive" >
+                                <thead>
+                                  <th>#</th>
+                                  <th>Product name</th>
+                                  <th>Price</th>
+                                  <th>Quantity</th>
+                                  <th>Amount</th>
+                                  <th>Remove</th>
+                                </thead>
+                                <tbody id="product_sold_today" >
+
+                                </tbody>
+                            </table>
+                          </div>
+                            <button class="tablinks btn-info" onclick="openform(event, 'preview_invoice_div');preview_invoice()">Preview Invoice</button>
+                        </fieldset>
+                    </div>
+                  </fieldset>
+        </div>
+        <div class="tabcontent" id="profomer_form">
+            <h3><center>PROFORMER INVOICE </center></h3>
+          <div class="rows">
+            <fieldset>
+              <div class="rows">
+                <div class="col-md-6">
+                  <input type="text"style="text-align: center"class="form-control"id="all_item_search_box" onkeyup="search_item_from_all_list()" placeholder="----------------Search Item~~~-------------"/>
+                  <br/>
+                  <div class="box box-primary" style="height: 400px;overflow: auto">
+                      <div class="box-header">
+                          <div class="col-sm-8"> <h4 class="box-title">List of All Item</h4></div>
+                          <div class="col-sm-4">
+                              <a href="#" class="btn btn-default pull-right" onclick="attach_Item_to_costomer_proformer()"><i id="attach_cat_icon" style="color:#328CAF" class="fa fa-send fa-2x"></i></a>
+                          </div>
+                      </div>
+                      <div class="box-body" >
+                          <!-- <label><input type="checkbox" id="select_all_checkbox"> Select All</label> -->
+                          <table class="table">
+
+                          </table>
+                          <div id="">
+                              <table class="table">
+                                <tr>
+                                  <td>  <label><input type="checkbox" id="select_all_checkbox"> Select All</label></td>
+                                  <td>Item Name</td>
+                                  <td>Item Price</td>
+                                  <td>Item Balance</td>
+                                </tr>
+                                <tbody id="all_item_list_body">
+                              <?php
+                                  $sql_select_item_result=mysqli_query($conn,"SELECT Quantity,ps.Product_ID,Selling_price,buying_price,product_name,product_unit FROM tbl_product tp, tbl_product_store ps WHERE   ps.Product_ID=tp.Product_ID limit 50") or die(mysqli_error($conn));
+                                  if(mysqli_num_rows($sql_select_item_result)>0){
+                                      while($category_rows=mysqli_fetch_assoc($sql_select_item_result)){
+                                        $Product_ID = $category_rows['Product_ID'];
+                                        $item = $category_rows['product_name'];
+                                        $price = $category_rows['Selling_price'];
+                                        $unit = $category_rows['product_unit'];
+                                        $balance = $category_rows['Quantity'];
+                                          echo "<tr>
+                                                      <td>
+                                                          <label style='font-weight:normal'>
+                                                              <input type='checkbox'class='Product_ID' name='Product_ID' value='$Product_ID'>
+                                                          </label>
+                                                      </td>
+                                                      <td>$item ($unit)</td>
+                                                      <td>$price</td>
+                                                      <td>$balance</td>
+                                                </tr>";
+                                      }
+                                  }
+                              ?></tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="row">
+                      <div class="col-sm-5">
+                          <label>SELECT CUSTOMER</label>
+                      </div>
+                      <div class="col-sm-7">
+                          <select class="form-control" id="Customer_ID_P" onchange="refresh_content()">
+                            <option value="">~~~customer~~~</option>
+                              <?php
+                                  $select_customers_result=mysqli_query($conn,"SELECT Customer_ID, Client_name FROM tbl_customer_registraion WHERE  enabled_disabled='enabled'") or die(mysqli_error($conn));
+                                  if(mysqli_num_rows($select_customers_result)>0){
+                                      while($costomersd=mysqli_fetch_assoc($select_customers_result)){
+                                         $Client_name=$costomersd['Client_name'];
+                                         $Customer_ID=$costomersd['Customer_ID'];
+                                         echo "<option value='$Customer_ID'>$Client_name</option>";
+                                      }
+                                  }
+                              ?>
+                          </select>
+
+                      </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <br/>
+                        <div class="box box-primary" style="height: 400px;overflow: auto">
+                            <div class="box-header">
+                                <input id="Customer_ID" style="display:none" value="<?php echo $Customer_ID;?>">
+                                <div class="col-sm-12"><p id="category_list_tittle" style="font-size:17px">Item attached to </p></div>
+                                <div class="col-sm-6" style="display:none">
+                                    <input type="text" style="text-align:center" class="form-control" id="attached_category_search_box" placeholder="--------Search--------" />
+                                </div>
+                            </div>
+                            <div class="box-body" id="attached_item_body">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
         <div class="tabcontent" id="invoicetoday">
           <h3><center>INVOIVE GENERATED TODAY </center></h3>
           <table class="table" width="100%">
@@ -259,7 +402,7 @@ desired effect
                       $Current_Date_Time = $date['Date_Time'];
                   }
                   $Filter_Value = substr($Current_Date_Time,0,11);
-                  $Start_Date = $Filter_Value.' 00:00';
+                  $Start_Date = $Filter_Value.'00:00';
                   $End_Date = $Current_Date_Time;
 
               ?>
@@ -270,11 +413,12 @@ desired effect
                 <td><input type="date" name="" value="<?= $Start_Date ?>"  id="start_date"></td>
                 <td><input type="date" name="" value="<?= $End_Date ?>"  id="end_date" ></td>
                 <td><input type="button" name="filterbtn" class="btn btn-primary" value="FILTER" onclick="filtersalesreport()"></td>
-                <td><input type="button" name="" value="PRINT RECORD" class="btn btn-info" ></td>
+                <td><a href="print_sales_record.php?start_date=<?= $Start_date ?>&&End_date=<?= $End_Date?>" class="btn btn-info" target="_blank">PRINT RECORD</a> </td>
               </tr>
               <tr>
                 <th>SN</th>
                 <th>PRODUCT NAME</th>
+                <th>PRICE</th>
                 <th>QUANTITY</th>
                 <th>AMOUNT</th>
               </tr>
@@ -469,9 +613,7 @@ desired effect
         </div>
         <div id="Client" class="tabcontent">
           <center><h3></h3></center> <center style="align-content:right;"><button class="tablinks btn btn-info" onclick="openform(event, 'Add_new_CLient')" name="button">ADD NEW </button></center>
-          <?php
-          $customer_list = mysqli_query($conn, "SELECT Customer_ID,client_region,client_street, Client_name FROM tbl_customer_registraion where User_ID='$session_ID'") or die(mysqli_error($conn));
-          ?>
+
           <div class="col-md-12" style='height:400px;overflow-y:scroll'>
               <table class='table' style='background:#FFFFFF'>
                   <caption><b><center>LIST OF REGISTERED CUSTOMER</center></b></caption>
@@ -482,6 +624,9 @@ desired effect
                       <th>ACTION</th>
                   </tr>
                   <tbody id='list_of_all_customer'>
+                    <?php
+                        $customer_list = mysqli_query($conn, "SELECT Customer_ID,client_region,client_street, Client_name FROM tbl_customer_registraion where User_ID='$session_ID'") or die(mysqli_error($conn));
+                    ?>
                     <?php
                     if((mysqli_num_rows($customer_list))){
                       $num=0;
@@ -496,7 +641,8 @@ desired effect
                             <td><?php echo $num; ?></td>
                             <td><input hidden value="<?php echo $Customer_ID; ?>"><?php echo $customer_name; ?></td>
                             <td><?php echo $region .'('.$street.')'; ?></td>
-                            <td><input value="CELL PRODUCT" type="button" onclick="capture_customer_id(<?php echo $Customer_ID;?>)"  id="cell_product"></td>
+                            <td><input value="SALE PRODUCT" type="button" onclick="capture_customer_id(<?php echo $Customer_ID;?>)"  id="cell_product">
+                            </td>
                         </tr>
                         <?php
                        }
@@ -725,7 +871,8 @@ desired effect
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-
+  <div id="edit_user">
+  </div>
   <!-- Main Footer -->
 
 
@@ -769,6 +916,7 @@ desired effect
       </div>
       <!-- /.tab-pane  -->
     </div>
+
   </aside>
   <!-- /.control-sidebar -->
   <!-- Add the sidebar's background. This div must be placed
@@ -805,13 +953,77 @@ desired effect
          <!-- /.modal-dialog -->
        </div>
 
+
        <!-- /.modal -->
 <!-- REQUIRED JS SCRIPTS -->
 <?php include("footer.php"); ?>
 <script>
   $(document).ready(function(){
     product_instock();
+
+    $('select').select2();
   });
+    function search_item_from_all_list(){
+      var all_item_search_box = $("#all_item_search_box").val();
+      $.ajax({
+        type:'post',
+        url:'ajax_profomer_invoice.php',
+        data:{all_item_search_box:all_item_search_box},
+        success:function(responce){
+          $("#all_item_list_body").html(responce);
+        }
+      });
+    }
+    function attach_Item_to_costomer_proformer(){
+       var selectedCategory = [];
+          $(".Product_ID:checked").each(function() {
+              selectedCategory.push($(this).val());
+            });
+       var Customer_ID=$("#Customer_ID_P").val()
+       if(Customer_ID==""){
+         $("#Customer_ID_P").css("border","2px solid red");
+         alert("Select Customer To attach Selected Item(s)");
+         exit;
+       }else{
+         $("#Customer_ID_P").css("border","");
+       }
+       $.ajax({
+           type:'POST',
+           url:'ajax_attach_Item_to_costomer_proformer.php',
+           data:{selectedCategory:selectedCategory,Customer_ID:Customer_ID},
+           success:function(data){
+               $("#attached_item_body").html(data);
+               refresh_content()
+           }
+       });
+      //refresh_content()
+    }
+
+    function refresh_content(){
+        var Customer_ID=$("#Customer_ID_P").val();
+        $("#select_all_checkbox").prop("checked",false)
+
+        var sel = document.getElementById("Customer_ID_P");
+        var Client_name= sel.options[sel.selectedIndex].text;
+
+        $("#category_list_tittle").html("List of Item attached to <b>"+Client_name+"</b>")
+        $.ajax({
+            type:'POST',
+            url:'refresh_item_selected_to_customer.php',
+            data:{Customer_ID:Customer_ID},
+            success:function(data){
+              $("#attached_item_body").html(data);
+            }
+        });
+        $.ajax({
+            type:'POST',
+            url:'Ajax_refresh_all_item_list.php',
+            data:{Customer_ID:Customer_ID},
+            success:function(data){
+                 $("#all_item_list_body").html(data);
+            }
+        });
+    }
   function stock_product(){
     var Product_ID = $("#Product_ID").val();
     var Selling_price = $("#Selling_price").val();
@@ -863,13 +1075,13 @@ desired effect
       $('#start_date').css("border","");
       $('#end_date').css("border","");
       document.getElementById('class_loader').innerHTML = '<div align="center" style="" id="progressStatus"><img src="images/ajax-loader_1.gif" width="" style="border-color:white "></div>';
-      alert(start_date  + end_date);
+    //  alert(start_date  + end_date);
       $.ajax({
         type:'post',
-        url:'ajax_today_product_sold.php',
+        url:'ajax_filter_product_sold.php',
         data:{start_date:start_date, end_date:end_date, filterbtn:''},
         success:function(responce){
-          $("#filtersalesreport").html(responce);
+          $("#sales_record").html(responce);
         }
       });
     }
@@ -896,10 +1108,11 @@ desired effect
   }
 
 function cell_that_product(Product_ID){
-var inp_id = "id"+Product_ID;
+  var inp_id = "id"+Product_ID;
   var Customer_ID = $('#selected_customer_id').val();
   var quantity = $('#'+inp_id).val();
   var balance = $('#balance').val();
+  //alert(quantity+balance);
   if(quantity > balance){
       $("#"+inp_id).css("border","2px solid red");
       alert('Stock is less than the value CHANGE QUANTITY VALUE');
@@ -929,8 +1142,7 @@ function today_product_sold(){
       url:'ajax_today_product_sold.php',
       data:{Customer_ID:Customer_ID},
       success:function(responce){
-        //alert(responce);
-        $("#product_sold_today").html(responce);
+        $("#product_sold_today_now").html(responce);
       }
     });
 }
@@ -969,6 +1181,18 @@ function invoice_generated(){
       window.open('invoice_generated_pdf.php',"_blank");
       }
     });
+}
+
+function lpo(){
+  alert("ghjjjjjjjjjjjjjjjjjj");
+  $.ajax({
+    type:'POST',
+    url:'ajax_local_purchase_order.php',
+    data:{},
+    success:function(responce){
+      $("#local_purchase_form").html(responce);
+    }
+  });
 }
 
 </script>
@@ -1028,13 +1252,13 @@ function company_logo_dialog(){
     url:'company_logo.php',
     data:{company_ID:company_ID},
     success:function(responce){
-      $("#logo").dialog({
+      $("#edit_user").dialog({
              title: 'UPLOAD COMPANY LOGO ',
-             width: '80%',
-             height: 550,
+             width: '50%',
+             height: 350,
              modal: true,
          });
-         $("#logo").html(responce);
+         $("#edit_user").html(responce);
     }
   });
 }
@@ -1042,7 +1266,7 @@ function company_logo_dialog(){
 function openform(evt, formname) {
   var i, tabcontent, tablinks;
   tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
+  for (i = 0; i < tabcontent.length; i++){
     tabcontent[i].style.display = "none";
   }
   tablinks = document.getElementsByClassName("tablinks");
@@ -1063,6 +1287,4 @@ function customerNameSeach(){
     }
   });
 }
-
-
 </script>
