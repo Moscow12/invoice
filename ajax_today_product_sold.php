@@ -4,7 +4,7 @@ session_start();
     if(isset($_POST['Customer_ID'])){
       $Customer_ID =$_POST['Customer_ID'];
     }else{
-      $Customer_ID="0";
+      $Customer_ID=0;
     }
     $session_ID = $_SESSION['User_ID'];
     if(isset($_POST['Cell_ID'])){
@@ -12,16 +12,16 @@ session_start();
     }else{
       $Cell_ID=0;
     }
-    if(isset($_POST['start_date'])){
-      $start_date = $_POST['start_date'];
-    }else{
-      $start_date='00:00';
-    }
-    if(isset($_POST['end_date'])){
-      $end_date = $_POST['end_date'];
-    }else{
-      $end_date='00:00';
-    }
+    // if(isset($_POST['start_date'])){
+    //   $start_date = $_POST['start_date'];
+    // }else{
+    //   $start_date='00:00';
+    // }
+    // if(isset($_POST['end_date'])){
+    //   $end_date = $_POST['end_date'];
+    // }else{
+    //   $end_date='00:00';
+    // }
 
     $sales = mysqli_query($conn, "SELECT Customer_ID,  cp.Quantity, ps.Product_ID, Cell_ID, Selling_price,product_name,product_unit FROM tbl_product tp, tbl_product_store ps, tbl_cell_product cp where cp.User_ID='$session_ID' AND ps.Product_ID=cp.Product_ID AND tp.Product_ID=cp.Product_ID AND Customer_ID='$Customer_ID'") or die(mysqli_error($conn));
     //AND DATE(cp.created_at) BETWEEN '$start_date' AND '$end_date'
@@ -58,5 +58,4 @@ session_start();
         $remove_item_selected_result = mysqli_query($conn, $remove_item_selected);
       }
 
-
- ?>
+    ?>
