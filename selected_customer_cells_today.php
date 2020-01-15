@@ -23,8 +23,12 @@
      ?>
           <p>
             <fieldset>
-
+              <div class=" row col-md-offset-3 col-md-6 col-md-offset-3">
+                <input type="text" class="form-control" style="text-align: center" name="product_name" id="seach_ID" placeholder="~~~~~~~~~~~Search Item~~~~~~~~~~~~~~~" onkeyup="search_item_from_all_list()">
+              </div><br>
+              <div class="rows col-md-12">
                   <form action="" method="post">
+
                     <div style='height:200px;overflow-y:scroll'>
                     <table class="table table-bordered table-responsive" >
                         <thead>
@@ -36,7 +40,7 @@
                           <th>Action</th>
                         </thead>
 
-                        <tbody>
+                        <tbody id="item_result">
                           <input type="text" id="selected_customer_id" name="Customer_ID" value="<?php echo $Customer_ID;?>" style="display:none">
                           <?php
 
@@ -55,7 +59,9 @@
                             <td align="center"><?php echo $price; ?><input id="price"style="display:none" value="<?php echo $price; ?>"></td>
                             <td align="center"><?php echo $balance;?><input id='balance'  value="<?php echo $balance; ?>" style="display:none"></td>
                             <td><input class="form-control" name="quantity" id="<?php echo "id".$Product_ID; ?>" placeholder="Quantity" ></td>
-                            <td><input  type="button" class="btn btn-info" value="CELL"  onclick="cell_that_product('<?php echo $Product_ID;?>')"></td>
+                            <td>
+                              <input  type="button" class="btn btn-success" value="SALE"  onclick="cell_that_product('<?php echo $Product_ID;?>')">
+                            </td>
                           </tr>
                         <?php }?>
 
@@ -63,12 +69,12 @@
 
                     </table></div>
                   </form>
-
+                </div>
             </fieldset>
             <fieldset>
 
               <div class="" id="div_show_product_sold_now">
-                  <center><h3 >PRODUCT SOLD TO <span style="background-color:#ccffcc;"><?php echo $customer_name; ?></span>  </h3></center>
+                  <center><h3 >PRODUCT SOLD TO <span style="background-color:#ccffcc;"><?php echo $customer_name; ?>=======</span>  </h3></center>
                   <input type="text" hidden name="" id="Customer_ID" value="<?php echo $Customer_ID; ?>">
 
                   <fieldset>
@@ -82,7 +88,7 @@
                             <th>Amount</th>
                             <th>Remove</th>
                           </thead>
-                          <tbody id="product_sold_today" >
+                          <tbody id="product_sold_today_now" >
 
                           </tbody>
                       </table>
@@ -91,3 +97,16 @@
                   </fieldset>
               </div>
             </fieldset>
+            <script type="text/javascript">
+              function search_item_from_all_list(){
+                var seach_Item= $("#seach_ID").val();
+                $.ajax({
+                  type:'POST',
+                  url:'Ajax_search_item_from_all_list.php',
+                  data:{seach_Item:seach_Item},
+                  success:function(responce){
+                    $("#item_result").html(responce);
+                  }
+                });
+              }
+            </script>
