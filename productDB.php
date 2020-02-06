@@ -18,6 +18,7 @@ session_start();
         }
       }
 
+
       if(isset($_POST['client_details'])){
         $Client_name = mysqli_real_escape_string($conn, $_POST['Client_name']);
         $Clint_PhoneNumber = mysqli_real_escape_string($conn, $_POST['Clint_PhoneNumber']);
@@ -113,6 +114,20 @@ session_start();
                 window.history.back();
               </script>
             <?php
+          }
+        }
+
+        if(isset($_POST['btn_terms'])){
+          $Shipping_terms =mysqli_real_escape_string($conn, $_POST['Shipping_terms']);
+          $terms_condition =mysqli_real_escape_string($conn, $_POST['terms_condition']);
+          $User_ID = $_SESSION['User_ID'];
+
+          $sql_insert_terms = mysqli_query($conn, "INSERT INTO tbl_terms_condition(Shipping_terms, terms_condition, User_ID)VALUES('$Shipping_terms', '$terms_condition', '$User_ID') ") or die(mysqli_error($conn));
+
+          if(!$sql_insert_terms){
+            echo "failed";
+          }else{
+            echo "success";
           }
         }
 ?>

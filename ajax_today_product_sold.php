@@ -25,7 +25,7 @@ session_start();
 
     $sales = mysqli_query($conn, "SELECT Customer_ID,  cp.Quantity, ps.Product_ID, Cell_ID, Selling_price,product_name,product_unit FROM tbl_product tp, tbl_product_store ps, tbl_cell_product cp where cp.User_ID='$session_ID' AND ps.Product_ID=cp.Product_ID AND tp.Product_ID=cp.Product_ID AND Customer_ID='$Customer_ID'") or die(mysqli_error($conn));
     //AND DATE(cp.created_at) BETWEEN '$start_date' AND '$end_date'
-    ///die("SELECT Customer_ID,  cp.Quantity, ps.Product_ID, Cell_ID, Selling_price,product_name,product_unit FROM tbl_product tp, tbl_product_store ps, tbl_cell_product cp where cp.User_ID='$session_ID' AND ps.Product_ID=cp.Product_ID AND tp.Product_ID=cp.Product_ID AND Customer_ID='$Customer_ID'AND DATE(cp.created_at) BETWEEN $start_date AND $end_date");
+    //die("SELECT Customer_ID,  cp.Quantity, ps.Product_ID, Cell_ID, Selling_price,product_name,product_unit FROM tbl_product tp, tbl_product_store ps, tbl_cell_product cp where cp.User_ID='$session_ID' AND ps.Product_ID=cp.Product_ID AND tp.Product_ID=cp.Product_ID AND Customer_ID='$Customer_ID'AND  DATE(cp.created_at)=CURDATE()");
 
       $product_sold_list = mysqli_query($conn, "SELECT Customer_ID,  cp.Quantity, ps.Product_ID, Cell_ID, Selling_price,product_name,product_unit FROM tbl_product tp, tbl_product_store ps, tbl_cell_product cp where cp.User_ID='$session_ID' AND ps.Product_ID=cp.Product_ID AND tp.Product_ID=cp.Product_ID AND Customer_ID='$Customer_ID'AND DATE(cp.created_at)=CURDATE()") or die(mysqli_error($conn));
       if((mysqli_num_rows($product_sold_list))>0){

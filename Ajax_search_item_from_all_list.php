@@ -18,15 +18,18 @@ session_start();
         $balance = $rows['Quantity'];
 
 
-        echo "<tr id='cellselected'>
-                <td>".$num++."</td>
-                <td aligne='center'>$item($unit)<input value='$Product_ID' name='Product_ID' Style='display:none'></td>
-                <td>$price<input id='price' style='display:none'  value='$price' ></td>
-                <td align='center'> $balance<input id='balance'  value=' $balance' style='display:none'></td>
-                <td><input class='form-control' name='quantity' id=' 'id'.$Product_ID' placeholder='Quantity' ></td>
-                <td><input  type='button' class='btn btn-success' value='SALE'  onclick='cell_that_product($Product_ID)'></td>
-              </tr>";
-
+      ?>
+      <tr id="cellselected">
+        <td><?php echo $num++; ?></td>
+        <td align="center"><?php echo $item;?> (<?php echo $unit; ?>)<input name="Product_ID"  value="<?php echo $Product_ID; ?>" style="display:none"></td>
+        <td align="center"><?php echo $price; ?><input id="price"style="display:none" value="<?php echo $price; ?>"></td>
+        <td align="center"><?php echo $balance;?><input id='balance<?= $Product_ID ?>'  value="<?php echo $balance; ?>" style="display:none"></td>
+        <td><input class="form-control" name="quantity" id="<?php echo "id".$Product_ID; ?>" placeholder="Quantity" ></td>
+        <td>
+          <input  type="button" class="btn btn-success" value="SALE"  onclick="cell_that_product('<?php echo $Product_ID;?>')">
+        </td>
+      </tr>
+    <?php
         }
       }else{
         echo "<tr>

@@ -1,6 +1,7 @@
 
 <?php
     include("connection.php");
+      //session_start();
       session_start();
           if(isset($_GET['Customer_ID'])){
             $Customer_ID =$_GET['Customer_ID'];
@@ -13,6 +14,7 @@
             $Invoice_ID=0;
           }
           $session_ID = $_SESSION['User_ID'];
+          $session_fullname = $_SESSION['fullname'];
       $customer_name= "";
       $Query_name = mysqli_query($conn, "SELECT  cp.Customer_ID, cp.Product_ID, cp.User_ID,product_description, product_name,cp.quantity,Selling_price,product_name,product_unit FROM tbl_product tp, tbl_product_store ps, tbl_cell_product cp WHERE cp.Customer_ID='$Customer_ID' AND cp.Product_ID= ps.Product_ID AND ps.Product_ID=tp.Product_ID AND DATE(cp.created_at) = CURDATE()" ) or die(mysqli_error($conn));
       $select_incoice = mysqli_query($conn, "SELECT Invoice_ID, duedate,Customer_ID FROM tbl_invoice WHERE Customer_ID='$Customer_ID' AND User_ID='$session_ID' AND DATE(created_at)=CURDATE()") or die(mysqli_error($conn));
@@ -84,27 +86,30 @@
               border-right: 2px solid blue;
               border-radius: 5px;
             }
-            body {
-                overflow:hidden;
-                height:100vh;
-                background:radial-gradient(circle at 50% 120px, #c6a5f0 0px, #c6a5f0 120px, #b793ec 120px, #b793ec 200px, #ac85e8 200px, #ac85e8 320px, #a379e5 320px, #a379e5, #896ae1 500px, #896ae1 100% );
-              }
+            table tr #product{
+                border: 2px solid black;
+            }
+            // body {
+            //     overflow:hidden;
+            //     height:100vh;
+            //     background:radial-gradient(circle at 50% 120px, #c6a5f0 0px, #c6a5f0 120px, #b793ec 120px, #b793ec 200px, #ac85e8 200px, #ac85e8 320px, #a379e5 320px, #a379e5, #896ae1 500px, #896ae1 100% );
+            //   }
           </style>
           <table class='table' width='100%'>
             <tr>
-              <td style='height: 150px; width:40%; align:left;' ><p style='height: 150px; align:center;' >" .$company_logo."</p><br/><h2>INVOICE</h2></td>
-              <td style='height:150px;   width:20%; align:right;' >" .$companyname. "<br/>" .$postaladdress."<br/>" .$company_email.".<br/>" .$name. "|" .$phone. "|" .$email. "</td>
+              <!--<td style='height: 5px; width:10px; align:left;' ><p style='height: 50px; width:50px; align:center;' ><img src='/dd.jpg'></p><br/><h2>INVOICE</h2></td>-->
+              <td style='height:10px;   width:70%; align:right;' align='center'><h1>" .$companyname. "</h1><br/>" .$postaladdress."<br/>" .$name. "|" .$phone. "|" .$email. "</td>
             </tr>
           </table>
-          <div id=''>.</div>
+          <div id='' height='10px' width='100%'></div>
           <table width='100%' >
           <tr><td  style='height: 200px;'>
             <table width='100%' align='left' style='border: 2px solid black'>
               <tbody>
-              <tr style='align-content:center; background-color:grey;border-radius: 5px;' ><th colspan='2' >INVOICE DETAILS</th></tr>
+              <tr style='align-content:center; background-color:grey;border-radius: 5px;' ><th colspan='2' >SYSTEM IMPLIMENTATION TOTAL COST</th></tr>
               <tr>
-                <th>INVOICE#</th>
-                <td>00" .$Invoice_ID. "</td>
+                <th>PROFORMER</th>
+                <!--<td>00" .$Invoice_ID. "</td>
               </tr>
               <tr>
                 <th style='text-align:left;'> ACCOUNT TYPE</th>
@@ -120,7 +125,7 @@
               </tr>
               <tr>
                 <th style='text-align:left;'>INVOICE DATE</th>
-                <td style='background-color:#be6511; text-color:;#fdfefe'>" .$duedate. "</td>
+                <td style='background-color:#be6511; text-color:;#fdfefe'>" .$duedate. "</td>-->
               </tr>
               </tbody>
             </table>
@@ -129,7 +134,7 @@
             <td style='height: 200px;'>
             <table width='40%' align='center'>
                     <tbody>
-                    <tr><th colspan='2'>CUSTOMER DETAILS</th></tr>
+                    <tr><th colspan='2'>CLIENT DETAILS</th></tr>
                       <tr>
                         <th style='text-align:right;'>Name</th>
                         <td><b>" . $Client_name ."</b></td>
@@ -141,21 +146,22 @@
                       </tr>
                       <tr>
                         <th style='text-align:right;'>Phone Number</th>
-                        <td>" . $Clint_PhoneNumber ."</td>
+                        <td>" . $Clint_PhoneNumber ."|" . $client_email ."</td>
                       </tr>
-                      <tr>
+                    <!--  <tr>
                         <th style='text-align:right;'>Email Address</th>
                         <td>" . $client_email ."</td>
-                      </tr>
+                      </tr>-->
                     </tbody>
                   </table>
                 </td>  </tr></table>";
 
          $htm .="  <table width='100%' id='product' >
-                    <thead style='background-color:blue;'>
-                      <tr style='background-color:blue;'>
+                    <thead style='background-color:#B0E0E6;'>
+                      <tr style='background-color:#B0E0E6;'>
                         <th>#</th>
                         <th>Product Name</th>
+                        <th>Product Description</th>
                         <th>Price</th>
                         <th>Quantity</th>
                         <th>Amount</th>
@@ -175,18 +181,18 @@
                         $Amount = $price * $quantity;
                         $Total += $Amount;
                         $num++;
-                    $htm .= "<tr><td width='5%' align='center'>$num</td><td align='center'>" . $product_name . "<br/>" .$product_description. "</td><td align='center'>" . $price . "</td><td align='center'>" . $quantity . "</td><td align='center'>" . $Amount . "</td></tr>";
+                    $htm .= "<tr style='border: 2px solid black'><td width='5%' align='center'>$num</td><td border-bottom='solid 2px red'><b align='center'>" . $product_name . "</b></td><td>" .$product_description. "</td><td align='center'>" . number_format($price) . "</td><td align='center'>" . $quantity . "</td><td align='center'>" . number_format($Amount) . "/=</td></tr>";
                       }
 
                     }
 
-                    $VAT = $Total * 0.2;
+                    $VAT = $Total * 0.18;
                     $General = $VAT + $Total;
           $htm .= " </tbody>
                     <tfooter >
                       <tr >
                         <th colspan='4' align='left'><h3>TOTAL CASH REQUIRED</h3></th>
-                        <th style='background-color:#CCEDFF'>SUB TOTAL " .$Total . "<br/>VAT% &nbsp;&nbsp;".$VAT."<br/><span style=' font-size:18;'>TOTAL &nbsp;&nbsp;".$General."</span> </th>
+                        <th style='background-color:#CCEDFF' colspan='2' >SUB TOTAL " .number_format($Total) . "<br/>VAT% &nbsp;&nbsp;".number_format($VAT)."<br/><span style=' font-size:18;'>TOTAL &nbsp;&nbsp;".number_format($General)."</span> </th>
                       </tr>
                     </tfooter>
                 </table>
@@ -197,12 +203,14 @@
             <table class='table' width='100%'>
               <tr>
                 <td><b>Terms and Condition</b><br/>".$terms_condition."</td>
-                <th>Invoice Duedate</th>
-                <td>". $duedate ."</td>
+                <!--<th>Invoice Duedate</th>
+                <td>". $duedate ."</td>-->
               </tr>
-              <tr><td colspan='3' align='center'><b><h4>WELCOME</h4></b></td></tr>
+              <tr><td colspan='3' ></td></tr>
             </table>
-
+            <p>This is total cost that may school incure when will suggest to use this system.
+            If school management is willing to use this system, after analysing all requirement of the system prices are negotitable </p>
+            <b><h3 align='center'>WELCOME</h3></b>
         ";
         ?>
 
@@ -213,7 +221,7 @@
         $mpdf = new mPDF('', 'A4-L', 0, '', 12.7, 12.7, 14, 12.7, 8, 8);
       //  $mpdf = new mPDF('s', 'Letter');
         $mpdf->SetDisplayMode('fullpage');
-        $mpdf->SetFooter('|{PAGENO}|{DATE d-m-Y}');
+        $mpdf->SetFooter('Printed By ' . strtoupper($session_fullname) .'|{PAGENO}|{DATE d-m-Y}');
         $mpdf->WriteHTML($htm);
         $mpdf->Output();
         exit;

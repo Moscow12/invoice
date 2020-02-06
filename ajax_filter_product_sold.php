@@ -23,14 +23,15 @@ if(isset($_POST['filterbtn'])){
 
         echo "<tr><td>".$num++."</td>";
         echo "<td>".$product_name."</td>";
-        echo "<td>".$price."</td>";
+        echo "<td>".number_format($price)."</td>";
         echo "<td>".$quantity."</td>";
-        echo "<td>".$amount."</td></tr>";
+        echo "<td>".number_format($amount)."</td></tr>";
 
       }
     }
     $profit = $Total - $Total_buying;
-    echo "<tr><td colspan='4' align='center'><b>Total Sales</b></td><td><b>$Total</b></td></tr>";
-    echo "<tr><td colspan='4' align='center'><b>Total Profit</b></td><td><b>$profit</b></td></tr>";
+    echo "<tr><td colspan='4' align='center'><b>Total Sales</b></td><td><b>".number_format($Total)."</b></td></tr>";
+    echo "<tr><td colspan='4' align='center'><b>Total Profit</b></td><td><b>".number_format($profit)."</b></td></tr>";
+    echo "<tr><td><a class='btn btn-info' href='print_sales_record.php?Start_Date=$start_date&&End_Date=$end_date' target='_blank'><i class='fa fa-print'></i><span>PRINT</span></a></td></tr>";
 }
 ?>

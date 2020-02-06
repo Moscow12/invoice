@@ -2,20 +2,20 @@
 include("connection.php");
 session_start();
 
-      if(isset($_POST['company_account'])){
-        $account_type = mysqli_real_escape_string($conn, $_POST['account_type']);
-        $account_name = mysqli_real_escape_string($conn, $_POST['account_name']);
-        $Account_number = mysqli_real_escape_string($conn, $_POST['Account_number']);
-        $User_ID = $_SESSION['User_ID'];
-
-      $account = mysqli_query($conn, "INSERT INTO tbl_company_account(account_type, account_name, Account_number, User_ID)
-      VALUES('$account_type','$account_name','$Account_number', '$User_ID')");
-        if(!$account){
-          die("Couldn't insert  data" .mysqli_error($conn) );
-        }else{
-        header("location: dashboard.php");
-        }
-      }
+      // if(isset($_POST['company_account'])){
+      //   $account_type = mysqli_real_escape_string($conn, $_POST['account_type']);
+      //   $account_name = mysqli_real_escape_string($conn, $_POST['account_name']);
+      //   $Account_number = mysqli_real_escape_string($conn, $_POST['Account_number']);
+      //   $User_ID = $_SESSION['User_ID'];
+      //
+      // $account = mysqli_query($conn, "INSERT INTO tbl_company_account(account_type, account_name, Account_number, User_ID)
+      // VALUES('$account_type','$account_name','$Account_number', '$User_ID')");
+      //   if(!$account){
+      //     die("Couldn't insert  data" .mysqli_error($conn) );
+      //   }else{
+      //   header("location: dashboard.php");
+      //   }
+      // }
 
 
     if(isset($_POST['company_details'])){
@@ -42,38 +42,36 @@ session_start();
         }
     }
 
-    if(isset($_POST['terms'])){
-      $terms_condition = mysqli_real_escape_string($conn, $_POST['terms_condition']);
-      $User_ID = $_SESSION['User_ID'];
+    // if(isset($_POST['terms'])){
+    //   $terms_condition = mysqli_real_escape_string($conn, $_POST['terms_condition']);
+    //   $User_ID = $_SESSION['User_ID'];
+    //
+    //   $terms mysqli_query($conn, "INSERT INTO tbl_terms_condition(terms_condition, User_ID)
+    //    VALUES ('$terms_condition', '$User_ID') ");
+    //   if(!$terms){
+    //     die("Couldn,t insert data" .mysqli_error($conn));
+    //   }else{
+    //     header("location: dashboard.php");
+    //   }
+    // }
 
-      $terms mysqli_query($conn, "INSERT INTO tbl_terms_condition(terms_condition, User_ID)
-       VALUES ('$terms_condition', '$User_ID') ");
-      if(!$terms){
-        die("Couldn,t insert data" .mysqli_error($conn));
-      }else{
-        header("location: dashboard.php");
-      }
-    }
 
     if(isset($_POST['add_user'])){
       $fullname = mysqli_real_escape_string($conn, $_POST['fullname']);
       $email = mysqli_real_escape_string($conn, $_POST['email']);
-      $username = mysqli_real_escape_string($conn, $_POST['user_name']);
-      $phonenumber = mysqli_real_escape_string($conn, $_POST['phone_number']);
-
+      $user_name = mysqli_real_escape_string($conn, $_POST['user_name']);
+      $phone_number = mysqli_real_escape_string($conn, $_POST['phone_number']);
       $password =md5($_POST['password']);
 
-      //$User_ID = $_SESSION['User_ID'];
 
-    $account = mysqli_query($conn, "INSERT INTO user(fullname, email, user_name, phone_number, password)
-    VALUES('$fullname','$email','$username', '$phonenumber', '$password')");
-      if(!$account){
-        die("Couldn't insert  data" .mysqli_error($conn) );
-      }else{
-      header("location: dashboard.php");
-      }
+      $user_registration = mysqli_query($conn, "INSERT INTO user(fullname, email, user_name,phone_number, password)
+      VALUES('$fullname','$email','$user_name', '$phone_number', '$password')");
+        if(!$user_registration){
+          die("Couldn't insert  data" .mysqli_error($conn) );
+        }else{
+          header("location: dashboard.php");
+        }
     }
-
     if(isset($_POST['btnduedate'])){
       $Customer_ID = $_POST['Customer_ID'];
       $duedate = $_POST['duedate'];

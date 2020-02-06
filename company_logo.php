@@ -14,5 +14,4 @@
         <button type="submit" class="btn btn-info" name="upload">Upload Image</button>
         </form>
     </div>
-  
 </div>

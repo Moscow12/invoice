@@ -44,7 +44,7 @@
               }
           }
 
-          $select_product_inStore = mysqli_query($conn, "SELECT Quantity,ps.Product_ID,Selling_price,buying_price,product_name,product_unit FROM tbl_product tp, tbl_product_store ps WHERE ps.User_ID='$session_ID' AND ps.Product_ID=tp.Product_ID") or die(mysqli_error($conn));
+          $select_product_inStore = mysqli_query($conn, "SELECT Quantity,ps.Product_ID,Selling_price,buying_price,product_name,product_unit FROM tbl_product tp, tbl_product_store ps WHERE ps.Product_ID=tp.Product_ID") or die(mysqli_error($conn));
           $sn=0;
           if((mysqli_num_rows($select_product_inStore))>0){
             while($result = mysqli_fetch_assoc($select_product_inStore)){

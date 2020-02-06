@@ -194,8 +194,10 @@ desired effect
         <li ><button class="tablinks btn-block"  onclick="openform(event, 'adduser_form')"><i class="fa fa-plus"></i><span>&nbsp;&nbsp;&nbsp;&nbsp; REGISTER SYSTEM USER</span></button></li>
         <li> <button class="tablinks  btn-block" onclick="openform(event, 'show_company_register')"><i class="fa fa-book"></i>&nbsp;&nbsp;&nbsp;&nbsp;<span>REGISTER COMPANY</span></button></li>
         <li> <button class="tablinks btn-block" onclick="openform(event, 'company_account_form')"><i class="fa fa fa-fw fa-bank"></i>&nbsp;&nbsp;&nbsp;&nbsp;<span>COMPANY ACCOUNT</span></button></li>
-        <li class="treeview">
-        <a href="#" class="btn btn-primary btn-block"><i class="fa fa-link"></i> <span>COSTOMER FORMS</span>
+        <li> <button  class="tablinks btn-block" onclick="openform(event, 'profomer_form')"><i class="fa fa fa-fw fa-bank"></i>&nbsp;&nbsp;&nbsp;&nbsp;<span>PROFORMER INVOICE</span></button></li>
+        <li><button class="btn btn-info"  onclick="company_logo_dialog()" >Edit User</button> </li>
+        <!-- <li class="treeview">
+        <a href="#" class="btn btn-primary btn-block"><i class="fa fa-link"></i> <span>CSTOMER FORMS</span>
           <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
@@ -203,11 +205,11 @@ desired effect
         <ul class="treeview-menu">
           <li> <button class="tablinks btn-block" onclick="openform(event, 'Quotation_form')">QUOTATION</button></li>
           <li> <button class="tablinks btn-block" onclick="openform(event, 'local_purchase_form'), lpo()"><i class="fa fa fa-fw fa-bank"></i>&nbsp;&nbsp;&nbsp;&nbsp;<span>LOCAL PURCHASE ORDER</span></button></li>
-          <li> <button  class="tablinks btn-block" onclick="openform(event, 'profomer_form')"><i class="fa fa fa-fw fa-bank"></i>&nbsp;&nbsp;&nbsp;&nbsp;<span>PROFORMER INVOICE</span></button></li>
-          <li><button class="btn btn-info"  onclick="company_logo_dialog()" >Edit User</button> </li>
+
         </ul>
-      </li>
+      </li> -->
       </ul>
+      <li><a href="#" data-toggle="modal" data-target="#modal-default">Set terms and condition</a> </li>
       <!-- /.sidebar-menu -->
     </section>
     <!-- /.sidebar -->
@@ -224,9 +226,9 @@ desired effect
         -------------------------->
 
         <div class="tab col-xs-12 col-sm-12 col-md-12">
-          <button class="tablinks" onclick="openform(event, 'Product')">PPODUCT</button>
+          <button class="tablinks" onclick="openform(event, 'Product')">STORE</button>
           <button class="tablinks" id='Client_tab'onclick="openform(event, 'Client')">CLIENT</button>
-          <button class="tablinks" id='cellproduct_tab' onclick="openform(event, 'cellproduct')">SALE PRODUCT</button>
+          <button class="tablinks" id='cellproduct_tab' onclick="openform(event, 'cellproduct')">SELL PRODUCT</button>
           <button class="tablinks" onclick="openform(event, 'invoicetoday')">INVOICE</button>
 
         </div>
@@ -261,7 +263,7 @@ desired effect
                   </fieldset>
         </div>
         <div class="tabcontent" id="profomer_form">
-            <h3><center>PROFORMER INVOICE </center></h3>
+            <h3><center>PROFORMA INVOICE </center></h3>
           <div class="rows">
             <fieldset>
               <div class="rows">
@@ -295,7 +297,7 @@ desired effect
                                       while($category_rows=mysqli_fetch_assoc($sql_select_item_result)){
                                         $Product_ID = $category_rows['Product_ID'];
                                         $item = $category_rows['product_name'];
-                                        $price = $category_rows['Selling_price'];
+                                        $price = $category_rows['buying_price'];
                                         $unit = $category_rows['product_unit'];
                                         $balance = $category_rows['Quantity'];
                                           echo "<tr>
@@ -335,8 +337,8 @@ desired effect
                                   }
                               ?>
                           </select>
-
                       </div>
+
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
@@ -352,6 +354,7 @@ desired effect
                             <div class="box-body" id="attached_item_body">
 
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -369,7 +372,7 @@ desired effect
                 <th>Action</th>
             </tr>
           <?php
-              $select_incoice = mysqli_query($conn, "SELECT Invoice_ID, Client_name, duedate, i.Customer_ID FROM tbl_customer_registraion cr, tbl_invoice i WHERE i.Customer_ID=cr.Customer_ID AND i.User_ID='$session_ID' AND DATE(created_at)=CURDATE() ORDER BY Invoice_ID DESC") or die(mysqli_error($conn));
+              $select_incoice = mysqli_query($conn, "SELECT Invoice_ID, Client_name, duedate, i.Customer_ID FROM tbl_customer_registraion cr, tbl_invoice i WHERE i.Customer_ID=cr.Customer_ID AND i.User_ID='$session_ID'  ORDER BY Invoice_ID DESC") or die(mysqli_error($conn));
               $nams = 0;
               if((mysqli_num_rows($select_incoice))>0){
                 while($Incoice = mysqli_fetch_assoc($select_incoice)){
@@ -395,7 +398,7 @@ desired effect
                 ?>
             </table>
             <hr>
-            <table class="table table-responsive">
+            <table class="table table-responsive ">
               <?php
               $sql_date_time = mysqli_query($conn,"select now() as Date_Time ") or die(mysqli_error($conn));
                   while($date = mysqli_fetch_array($sql_date_time)){
@@ -413,7 +416,7 @@ desired effect
                 <td><input type="date" name="" value="<?= $Start_Date ?>"  id="start_date"></td>
                 <td><input type="date" name="" value="<?= $End_Date ?>"  id="end_date" ></td>
                 <td><input type="button" name="filterbtn" class="btn btn-primary" value="FILTER" onclick="filtersalesreport()"></td>
-                <td><a href="print_sales_record.php?start_date=<?= $Start_date ?>&&End_date=<?= $End_Date?>" class="btn btn-info" target="_blank">PRINT RECORD</a> </td>
+                <td><button  class="btn btn-info"  onclick="print_sales_record()">PRINT RECORD</button> </td>
               </tr>
               <tr>
                 <th>SN</th>
@@ -503,8 +506,8 @@ desired effect
                 <tbody>
                   <tr>
                     <th>Product Name</th>
-                    <th>Buying Price</th>
-                    <th>Selling Product</th>
+                    <th>Selling Price</th>
+                    <th>Buying Product</th>
                     <th>Quantity</th>
                     <th>Action</th>
                   </tr>
@@ -713,7 +716,8 @@ desired effect
 
           <?php
 
-            $product_list = mysqli_query($conn, "SELECT * FROM tbl_product where User_ID='$session_ID'");
+            $product_list = mysqli_query($conn, "SELECT * FROM tbl_product ");
+            //$product_list = mysqli_query($conn, "SELECT * FROM tbl_product where User_ID='$session_ID'");
            ?>
           <p>
 
@@ -938,14 +942,22 @@ desired effect
                  <div class="form-group row">
                      <label for="" class="col-sm-3 col-form-label">Terms and condition</label>
                      <div class="col-sm-9">
-                         <textarea  class="form-control" id="" name="terms_condition" rows="2" ></textarea>
+                         <textarea  class="form-control" required id="terms_condition" name="terms_condition" rows="2" ></textarea>
                      </div>
-                 </div><button type="button" class="btn btn-primary pull-right"  data-dismiss="modal" name="terms">Save</button>
+                 </div>
+                 <div class="form-group row">
+                     <label for="" class="col-sm-3 col-form-label">Shipping Terms</label>
+                     <div class="col-sm-9">
+                         <textarea  class="form-control" required id="Shipping_terms" name="Shipping_terms" rows="2" ></textarea>
+                     </div>
+                 </div>
+                 <button type="button" class="btn btn-primary pull-right" name="btn_terms"  onclick="save_termsandcondition()" name="terms">Save</button>
                  </form>
+                 <div class="footer">
+                   <button type="button" name="button" data-dismiss="modal">Close</button>
+                 </div>
              </div>
-             <div class="modal-footer">
-               <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-             </div>
+
 
            </div>
            <!-- /.modal-content -->
@@ -1006,7 +1018,7 @@ desired effect
         var sel = document.getElementById("Customer_ID_P");
         var Client_name= sel.options[sel.selectedIndex].text;
 
-        $("#category_list_tittle").html("List of Item attached to <b>"+Client_name+"</b>")
+        $("#category_list_tittle").html("List of Item attached to <b>"+Client_name+"</b>"+"<a href='print_profomer.php?Customer_ID="+Customer_ID+"' target='_blank' class='btn btn-info'> <i class='fa fa-print'></i><span>PRINT</span></a>");
         $.ajax({
             type:'POST',
             url:'refresh_item_selected_to_customer.php',
@@ -1107,34 +1119,34 @@ desired effect
     });
   }
 
-function cell_that_product(Product_ID){
-  var inp_id = "id"+Product_ID;
-  var Customer_ID = $('#selected_customer_id').val();
-  var quantity = $('#'+inp_id).val();
-  var balance = $('#balance').val();
-  //alert(quantity+balance);
-  if(quantity > balance){
-      $("#"+inp_id).css("border","2px solid red");
-      alert('Stock is less than the value CHANGE QUANTITY VALUE');
-
-  }else{
- if(quantity==""){
-    $("#"+inp_id).css("border","2px solid red");
-    exit();
-  }else{
-    $("#"+inp_id).css("border","");
-  $.ajax({
-    type:'POST',
-    url:'cell_product.php',
-    data:{selected_customer_id:Customer_ID, quantity:quantity, Product_ID:Product_ID},
-    success:function(responce){
-      alert("Umeuza kikamilifu");
-      today_product_sold()
+    function cell_that_product(Product_ID){
+      var inp_id = "id"+Product_ID;
+      var Customer_ID = $('#selected_customer_id').val();
+      var quantity = $('#'+inp_id).val();
+      var balance = $('#balance'+Product_ID).val();
+    //  alert("Quantity="+quantity+"balance="+balance);
+      if(parseInt(quantity) > parseInt(balance)){
+          $("#"+inp_id).css("border","2px solid red");
+          alert('Stock balance is less than the Quantity entered');
+    // exit();
+      }else{
+     if(quantity==""){
+        $("#"+inp_id).css("border","2px solid red");
+        exit();
+      }else{
+        $("#"+inp_id).css("border","");
+      $.ajax({
+        type:'POST',
+        url:'cell_product.php',
+        data:{selected_customer_id:Customer_ID, quantity:quantity, Product_ID:Product_ID},
+        success:function(responce){
+          alert("Umeuza kikamilifu");
+          today_product_sold()
+        }
+      });
+      }
+      }
     }
-  });
-}
-}
-}
 function today_product_sold(){
     var Customer_ID = $('#selected_customer_id').val();
     $.ajax({
@@ -1183,18 +1195,54 @@ function invoice_generated(){
     });
 }
 
-function lpo(){
-  alert("ghjjjjjjjjjjjjjjjjjj");
-  $.ajax({
-    type:'POST',
-    url:'ajax_local_purchase_order.php',
-    data:{},
-    success:function(responce){
-      $("#local_purchase_form").html(responce);
+  function lpo(){
+    alert("ghjjjjjjjjjjjjjjjjjj");
+    $.ajax({
+      type:'POST',
+      url:'ajax_local_purchase_order.php',
+      data:{},
+      success:function(responce){
+        $("#local_purchase_form").html(responce);
+      }
+    });
+  }
+  function save_termsandcondition(){
+    var Shipping_terms = $("#Shipping_terms").val();
+    var terms_condition = $("#terms_condition").val();
+    if(Shipping_terms=="" || terms_condition==""){
+      $("#Shipping_terms").css("border", "1px solid red")
+      $("#terms_condition").css("border", "1px solid red")
+    }else{
+    $.ajax({
+      type:'POST',
+      url:'productDB.php',
+      data:{Shipping_terms:Shipping_terms, terms_condition:terms_condition,btn_terms:''},
+      success:function(responce){
+        alert("Terms saved successfully");
+      }
+    });
     }
-  });
-}
+  }
 
+  function print_sales_record(){
+    var windowObjectReference;
+    var Start_Date =$("#start_date").val();
+    var End_Date = $("#end_date").val();
+    if(Start_Date =="" || End_Date ==""){
+      $("#start_date"||"#end_date").css("border","1px solid red")
+
+    }else{
+window.open('print_sales_record.php?Start_Date='+Start_Date+'&End_date='+End_Date, '_blank', 'resizable, scrollbars, status');
+    // $.ajax({
+    //   type:'GET',
+    //   url:'print_sales_record.php',
+    //   data:{Start_Date:Start_Date, End_date:End_Date},
+    //   success:function(responce){
+    //   windowObjectReference =  window.open('print_sales_record.php', '_blank', 'resizable, scrollbars, status');
+    //   }
+    // });
+  }
+}
 </script>
 <script>
 $(document).ready(function(){
