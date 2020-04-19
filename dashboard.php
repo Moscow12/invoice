@@ -196,6 +196,7 @@ desired effect
         <li> <button class="tablinks btn-block" onclick="openform(event, 'company_account_form')"><i class="fa fa fa-fw fa-bank"></i>&nbsp;&nbsp;&nbsp;&nbsp;<span>COMPANY ACCOUNT</span></button></li>
         <li> <button  class="tablinks btn-block" onclick="openform(event, 'profomer_form')"><i class="fa fa fa-fw fa-bank"></i>&nbsp;&nbsp;&nbsp;&nbsp;<span>PROFORMER INVOICE</span></button></li>
         <li><button class="btn btn-info"  onclick="company_logo_dialog()" >Edit User</button> </li>
+        <li><a href="testcode.php">Test code</a></li>
         <!-- <li class="treeview">
         <a href="#" class="btn btn-primary btn-block"><i class="fa fa-link"></i> <span>CSTOMER FORMS</span>
           <span class="pull-right-container">
@@ -913,9 +914,11 @@ desired effect
               <li><a href="#">Company Burner</a></li>
               <li><a href="#"  id="company_details">Company Details</a></li>
 
+
             </ul>
           </li>
           <li><a href="#" data-toggle="modal" data-target="#modal-default">Set terms and condition</a> </li>
+          <li><a href="testcode.php">Test code</a></li>
         </ul>
       </div>
       <!-- /.tab-pane  -->
